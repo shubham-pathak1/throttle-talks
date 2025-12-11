@@ -1,6 +1,6 @@
 // src/components/home/PostCard.tsx
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal } from 'lucide-react-native';
+import { Heart, MessageSquare, Share2, Bookmark } from 'lucide-react-native';
 import { useThemeStore } from '../../store/themeStore';
 import { FONTS, FONT_SIZES, SPACING, RADIUS } from '../../constants/theme';
 
@@ -17,6 +17,7 @@ export interface Post {
   comments: number;
   timestamp: string;
   isLiked?: boolean;
+  category?: string;
 }
 
 interface PostCardProps {
@@ -37,54 +38,83 @@ export default function PostCard({
   const { colors } = useThemeStore();
 
   return (
-    <View style={[styles.card, { borderBottomColor: colors.border }]}>
+    <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.authorSection} onPress={() => console.log('View profile')}>
+        <TouchableOpacity style={styles.authorSection} activeOpacity={0.7}>
           <Image source={{ uri: post.author.avatar }} style={styles.avatar} />
           <View style={styles.authorInfo}>
-            <Text
-              style={[
-                styles.authorName,
-                { color: colors.text, fontFamily: FONTS.body.family },
-              ]}
-            >
-              {post.author.name}
-            </Text>
+            <View style={styles.nameRow}>
+              <Text
+                style={[
+                  styles.authorName,
+                  { color: colors.text, fontFamily: FONTS.body.family },
+                ]}
+              >
+                {post.author.name}
+              </Text>
+              {post.category && (
+                <View style={[styles.categoryBadge, { backgroundColor: colors.accent + '20', borderColor: colors.accent }]}>
+                  <Text style={[styles.categoryText, { color: colors.accent, fontFamily: FONTS.body.family }]}>
+                    {post.category}
+                  </Text>
+                </View>
+              )}
+            </View>
             <Text
               style={[
                 styles.timestamp,
-                { color: colors.textSecondary, fontFamily: FONTS.body.family },
+                { color: colors.textTertiary, fontFamily: FONTS.body.family },
               ]}
             >
-              {post.timestamp}
+              @{post.author.username} • {post.timestamp}
             </Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.moreButton}>
-          <MoreHorizontal color={colors.textSecondary} size={20} strokeWidth={2} />
-        </TouchableOpacity>
       </View>
 
-      {/* Image */}
-      {post.image && (
-        <TouchableOpacity onPress={onPress} activeOpacity={0.95}>
-          <Image source={{ uri: post.image }} style={styles.postImage} />
-        </TouchableOpacity>
-      )}
+      {/* Content */}
+      <TouchableOpacity onPress={onPress} activeOpacity={0.95}>
+        <Text
+          style={[
+            styles.content,
+            { color: colors.text, fontFamily: FONTS.body.family },
+          ]}
+        >
+          {post.content}
+        </Text>
 
-      {/* Actions */}
-      <View style={styles.actions}>
-        <View style={styles.leftActions}>
+        {/* Image */}
+        {post.image && (
+          <Image source={{ uri: post.image }} style={styles.postImage} />
+        )}
+      </TouchableOpacity>
+
+      {/* Stats & Actions Bar */}
+      <View style={[styles.footer, { borderTopColor: colors.border }]}>
+        <View style={styles.stats}>
+          <Text style={[styles.statText, { color: colors.textSecondary, fontFamily: FONTS.body.family }]}>
+            {post.likes.toLocaleString()} likes
+          </Text>
+          <Text style={[styles.statDot, { color: colors.textTertiary }]}>•</Text>
+          <Text style={[styles.statText, { color: colors.textSecondary, fontFamily: FONTS.body.family }]}>
+            {post.comments} comments
+          </Text>
+        </View>
+
+        <View style={styles.actions}>
           <TouchableOpacity
             onPress={onLike}
-            style={styles.actionButton}
+            style={[
+              styles.actionButton,
+              post.isLiked && { backgroundColor: colors.accent + '15' }
+            ]}
             activeOpacity={0.7}
           >
             <Heart
-              color={post.isLiked ? colors.error : colors.text}
-              size={26}
-              fill={post.isLiked ? colors.error : 'none'}
+              color={post.isLiked ? colors.accent : colors.textSecondary}
+              size={20}
+              fill={post.isLiked ? colors.accent : 'none'}
               strokeWidth={2}
             />
           </TouchableOpacity>
@@ -94,7 +124,7 @@ export default function PostCard({
             style={styles.actionButton}
             activeOpacity={0.7}
           >
-            <MessageCircle color={colors.text} size={26} strokeWidth={2} />
+            <MessageSquare color={colors.textSecondary} size={20} strokeWidth={2} />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -102,136 +132,112 @@ export default function PostCard({
             style={styles.actionButton}
             activeOpacity={0.7}
           >
-            <Send color={colors.text} size={24} strokeWidth={2} />
+            <Share2 color={colors.textSecondary} size={20} strokeWidth={2} />
+          </TouchableOpacity>
+
+          <View style={styles.spacer} />
+
+          <TouchableOpacity
+            style={styles.actionButton}
+            activeOpacity={0.7}
+          >
+            <Bookmark color={colors.textSecondary} size={20} strokeWidth={2} />
           </TouchableOpacity>
         </View>
-
-        <TouchableOpacity activeOpacity={0.7}>
-          <Bookmark color={colors.text} size={24} strokeWidth={2} />
-        </TouchableOpacity>
       </View>
-
-      {/* Likes */}
-      <TouchableOpacity style={styles.likesSection}>
-        <Text
-          style={[
-            styles.likes,
-            { color: colors.text, fontFamily: FONTS.body.family },
-          ]}
-        >
-          {post.likes.toLocaleString()} likes
-        </Text>
-      </TouchableOpacity>
-
-      {/* Content */}
-      <TouchableOpacity onPress={onPress} activeOpacity={1}>
-        <Text
-          style={[
-            styles.content,
-            { color: colors.text, fontFamily: FONTS.body.family },
-          ]}
-        >
-          <Text style={styles.username}>@{post.author.username}</Text> {post.content}
-        </Text>
-      </TouchableOpacity>
-
-      {/* View Comments */}
-      {post.comments > 0 && (
-        <TouchableOpacity onPress={onComment} style={styles.viewComments}>
-          <Text
-            style={[
-              styles.viewCommentsText,
-              { color: colors.textSecondary, fontFamily: FONTS.body.family },
-            ]}
-          >
-            View all {post.comments} comments
-          </Text>
-        </TouchableOpacity>
-      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: SPACING['2xl'],
-    borderBottomWidth: 1,
-    paddingBottom: SPACING.lg,
+    borderRadius: RADIUS.lg,
+    borderWidth: 1,
+    marginBottom: SPACING.lg,
+    overflow: 'hidden',
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: SPACING.md,
+    padding: SPACING.lg,
+    paddingBottom: SPACING.md,
   },
   authorSection: {
     flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
+    alignItems: 'flex-start',
   },
   avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: RADIUS.full,
-    marginRight: SPACING.sm,
+    width: 44,
+    height: 44,
+    borderRadius: RADIUS.md,
+    marginRight: SPACING.md,
   },
   authorInfo: {
     flex: 1,
   },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+    marginBottom: 4,
+  },
   authorName: {
     fontSize: FONT_SIZES.base,
-    fontWeight: '600',
-    marginBottom: 2,
+    fontWeight: '700',
+  },
+  categoryBadge: {
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 2,
+    borderRadius: RADIUS.xs,
+    borderWidth: 1,
+  },
+  categoryText: {
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.5,
   },
   timestamp: {
     fontSize: FONT_SIZES.xs,
-    fontWeight: '500',
+    fontWeight: '600',
   },
-  moreButton: {
-    padding: SPACING.xs,
+  content: {
+    fontSize: FONT_SIZES.base,
+    fontWeight: '500',
+    lineHeight: 22,
+    paddingHorizontal: SPACING.lg,
+    marginBottom: SPACING.md,
   },
   postImage: {
     width: '100%',
-    height: 400,
-    borderRadius: RADIUS.md,
-    marginBottom: SPACING.md,
+    height: 320,
     backgroundColor: '#1A1A1A',
+  },
+  footer: {
+    borderTopWidth: 1,
+    padding: SPACING.lg,
+    paddingTop: SPACING.md,
+  },
+  stats: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+    marginBottom: SPACING.md,
+  },
+  statText: {
+    fontSize: FONT_SIZES.sm,
+    fontWeight: '700',
+  },
+  statDot: {
+    fontSize: FONT_SIZES.xs,
   },
   actions: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: SPACING.sm,
-  },
-  leftActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.md,
+    gap: SPACING.xs,
   },
   actionButton: {
-    padding: SPACING.xs,
+    padding: SPACING.sm,
+    borderRadius: RADIUS.sm,
   },
-  likesSection: {
-    marginBottom: SPACING.xs,
-  },
-  likes: {
-    fontSize: FONT_SIZES.sm,
-    fontWeight: '700',
-  },
-  content: {
-    fontSize: FONT_SIZES.sm,
-    fontWeight: '500',
-    lineHeight: 20,
-    marginBottom: SPACING.xs,
-  },
-  username: {
-    fontWeight: '700',
-  },
-  viewComments: {
-    marginTop: SPACING.xs,
-  },
-  viewCommentsText: {
-    fontSize: FONT_SIZES.sm,
-    fontWeight: '600',
+  spacer: {
+    flex: 1,
   },
 });
