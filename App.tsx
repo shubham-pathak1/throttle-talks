@@ -1,20 +1,49 @@
+import { useCallback, useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { View, Text } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+import { loadFonts } from './src/utils/fonts';
+import { useThemeStore } from './src/store/themeStore';
+import RootNavigator from './src/navigation/RootNavigator';
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  const [appIsReady, setAppIsReady] = useState(false);
+  const { colorScheme } = useThemeStore();
+
+  useEffect(() => {
+    async function prepare() {
+      try {
+        console.log('Loading fonts...');
+        await loadFonts();
+        console.log('Fonts loaded!');
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } catch (e) {
+        console.error('Error loading app:', e);
+      } finally {
+        setAppIsReady(true);
+        // Hide splash screen immediately when ready
+        SplashScreen.hideAsync();
+      }
+    }
+
+    prepare();
+  }, []);
+
+  if (!appIsReady) {
+    return null;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+        <RootNavigator />
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
