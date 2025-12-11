@@ -42,4 +42,5 @@ export const useThemeStore = create<ThemeState>((set) => ({
 // also add Onboarding flow - Welcome screens for first-time users 
 // Build more screens? (Settings, edit profile, create post, add vehicle forms)
 // Add animations? (More microinteractions, smooth transitions)
+// also the way the screens are transitioning i think that can be improved too
 // after all of this is completed i will check whether there is a need to add something else too, then only we will move to back end alright, and do you think this is the right approach?
