@@ -1,12 +1,15 @@
 // src/navigation/CustomTabBar.tsx
 import { View, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { Home, Calendar, Car, User, MessageCircle } from 'lucide-react-native';
+import { Gauge, CalendarDays, Warehouse, UserCircle, MessagesSquare } from 'lucide-react-native';
 
 import { useThemeStore } from '../store/themeStore';
-import { SPACING, RADIUS } from '../constants/theme';
+import { SPACING, RADIUS, LAYOUT } from '../constants/theme';
+
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
 export default function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const { colors } = useThemeStore();
@@ -18,17 +21,17 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
 
     switch (routeName) {
       case 'HomeTab':
-        return <Home color={iconColor} size={iconSize} strokeWidth={isFocused ? 2.5 : 2} />;
+        return <Gauge color={iconColor} size={iconSize} strokeWidth={isFocused ? 2.5 : 2} />;
       case 'MeetupsTab':
-        return <Calendar color={iconColor} size={iconSize} strokeWidth={isFocused ? 2.5 : 2} />;
+        return <CalendarDays color={iconColor} size={iconSize} strokeWidth={isFocused ? 2.5 : 2} />;
       case 'GarageTab':
-        return <Car color={iconColor} size={iconSize} strokeWidth={isFocused ? 2.5 : 2} />;
+        return <Warehouse color={iconColor} size={iconSize} strokeWidth={isFocused ? 2.5 : 2} />;
       case 'ProfileTab':
-        return <User color={iconColor} size={iconSize} strokeWidth={isFocused ? 2.5 : 2} />;
+        return <UserCircle color={iconColor} size={iconSize} strokeWidth={isFocused ? 2.5 : 2} />;
       case 'ChatTab':
-        return <MessageCircle color={iconColor} size={iconSize} strokeWidth={isFocused ? 2.5 : 2} />;
+        return <MessagesSquare color={iconColor} size={iconSize} strokeWidth={isFocused ? 2.5 : 2} />;
       default:
-        return <Home color={iconColor} size={iconSize} />;
+        return <Gauge color={iconColor} size={iconSize} />;
     }
   };
 
@@ -55,6 +58,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
           });
 
           if (!isFocused && !event.defaultPrevented) {
+            // Haptic feedback
             if (Platform.OS === 'ios') {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }
@@ -62,17 +66,29 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
           }
         };
 
+        const animatedStyle = useAnimatedStyle(() => {
+          return {
+            transform: [
+              {
+                scale: withSpring(isFocused ? 1 : 0.9, {
+                  damping: 15,
+                  stiffness: 150,
+                }),
+              },
+            ],
+            opacity: withSpring(isFocused ? 1 : 0.6),
+          };
+        });
+
         return (
-          <TouchableOpacity
+          <AnimatedTouchable
             key={route.key}
             accessibilityRole="button"
             accessibilityState={isFocused ? { selected: true } : {}}
             accessibilityLabel={options.tabBarAccessibilityLabel}
+            testID={options.tabBarTestID}
             onPress={onPress}
-            style={[
-              styles.tab,
-              { opacity: isFocused ? 1 : 0.6 }
-            ]}
+            style={[styles.tab, animatedStyle]}
             activeOpacity={0.7}
           >
             <View
@@ -85,7 +101,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
             >
               {getIcon(route.name, isFocused)}
             </View>
-          </TouchableOpacity>
+          </AnimatedTouchable>
         );
       })}
     </View>
