@@ -148,7 +148,7 @@ export default function HomeScreen() {
       {/* Floating Action Button */}
       <TouchableOpacity
         style={[styles.fab, { backgroundColor: colors.accent }]}
-        onPress={() => console.log('Create post')}
+        onPress={() => navigation.navigate('CreatePost' as never)}
         activeOpacity={0.85}
       >
         <Plus color={colors.background} size={28} strokeWidth={3} />

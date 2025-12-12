@@ -16,6 +16,7 @@ export type RootTabParamList = {
 export type HomeStackParamList = {
   Home: undefined;
   PostDetail: { postId: string };
+  CreatePost: undefined;
 };
 
 // Garage stack params
