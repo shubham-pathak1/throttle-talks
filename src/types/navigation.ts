@@ -38,15 +38,16 @@ export type ProfileStackParamList = {
 // Chat stack params
 export type ChatStackParamList = {
   Chat: undefined;
+  ChatDetail: { chatId: string; userName: string };
 };
 
 // Navigation prop types
-export type HomeScreenNavigationProp = CompositeNavigationProp<
+export type HomeScreenNavigationProp = CompositeNavigationProp
   NativeStackNavigationProp<HomeStackParamList, 'Home'>,
   BottomTabNavigationProp<RootTabParamList>
 >;
 
-export type GarageScreenNavigationProp = CompositeNavigationProp<
+export type GarageScreenNavigationProp = CompositeNavigationProp
   NativeStackNavigationProp<GarageStackParamList, 'Garage'>,
   BottomTabNavigationProp<RootTabParamList>
 >;

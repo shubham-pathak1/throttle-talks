@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { View, ScrollView, StyleSheet, RefreshControl, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { Filter, TrendingUp, PenSquare } from 'lucide-react-native';
+import { Search, SlidersHorizontal, Plus } from 'lucide-react-native';
 import { HomeScreenNavigationProp } from '../../types/navigation';
 import { useThemeStore } from '../../store/themeStore';
 import { SPACING, FONTS, FONT_SIZES, RADIUS } from '../../constants/theme';
@@ -22,7 +22,6 @@ export interface Post {
   comments: number;
   timestamp: string;
   isLiked?: boolean;
-  category?: 'Build' | 'Review' | 'Meet' | 'Discussion';
 }
 
 const MOCK_POSTS: Post[] = [
@@ -37,9 +36,8 @@ const MOCK_POSTS: Post[] = [
     image: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800',
     likes: 234,
     comments: 45,
-    timestamp: '2h ago',
+    timestamp: '2h',
     isLiked: false,
-    category: 'Build',
   },
   {
     id: '2',
@@ -52,9 +50,8 @@ const MOCK_POSTS: Post[] = [
     image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800',
     likes: 512,
     comments: 78,
-    timestamp: '5h ago',
+    timestamp: '5h',
     isLiked: true,
-    category: 'Meet',
   },
   {
     id: '3',
@@ -66,9 +63,8 @@ const MOCK_POSTS: Post[] = [
     content: 'Finally hit 500hp on the dyno! Years of building and tuning paid off. Full spec list in the comments for anyone interested.',
     likes: 892,
     comments: 156,
-    timestamp: '1d ago',
+    timestamp: '1d',
     isLiked: false,
-    category: 'Build',
   },
 ];
 
@@ -77,9 +73,6 @@ export default function HomeScreen() {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const [posts, setPosts] = useState<Post[]>(MOCK_POSTS);
   const [refreshing, setRefreshing] = useState(false);
-  const [activeFilter, setActiveFilter] = useState<string>('All');
-
-  const filters = ['All', 'Build', 'Review', 'Meet', 'Discussion'];
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -105,60 +98,27 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={[styles.header, { borderBottomColor: colors.border }]}>
-        <View style={styles.headerLeft}>
-          <Text style={[styles.logoText, { color: colors.text, fontFamily: FONTS.heading.family }]}>
-            THROTTLE TALKS
-          </Text>
-          <View style={[styles.liveIndicator, { backgroundColor: colors.accent }]}>
-            <View style={[styles.liveDot, { backgroundColor: colors.background }]} />
-            <Text style={[styles.liveText, { color: colors.background, fontFamily: FONTS.body.family }]}>
-              LIVE
-            </Text>
-          </View>
-        </View>
-        <TouchableOpacity
-          style={[styles.headerButton, { backgroundColor: colors.surface }]}
-          onPress={() => console.log('Trending')}
-        >
-          <TrendingUp color={colors.accent} size={20} strokeWidth={2.5} />
-        </TouchableOpacity>
-      </View>
-
-      {/* Filter Tabs */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.filterContainer}
-        contentContainerStyle={styles.filterContent}
-      >
-        {filters.map((filter) => (
+      <View style={styles.header}>
+        <Text style={[styles.logo, { color: colors.text, fontFamily: FONTS.heading.family }]}>
+          Throttle Talks
+        </Text>
+        <View style={styles.headerActions}>
           <TouchableOpacity
-            key={filter}
-            style={[
-              styles.filterChip,
-              {
-                backgroundColor: activeFilter === filter ? colors.primary : colors.surface,
-                borderColor: activeFilter === filter ? colors.primary : colors.border,
-              },
-            ]}
-            onPress={() => setActiveFilter(filter)}
+            style={styles.iconButton}
+            onPress={() => console.log('Search')}
             activeOpacity={0.7}
           >
-            <Text
-              style={[
-                styles.filterText,
-                {
-                  color: activeFilter === filter ? colors.background : colors.text,
-                  fontFamily: FONTS.body.family,
-                },
-              ]}
-            >
-              {filter}
-            </Text>
+            <Search color={colors.text} size={22} strokeWidth={2.5} />
           </TouchableOpacity>
-        ))}
-      </ScrollView>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={() => console.log('Filter')}
+            activeOpacity={0.7}
+          >
+            <SlidersHorizontal color={colors.text} size={22} strokeWidth={2.5} />
+          </TouchableOpacity>
+        </View>
+      </View>
 
       {/* Posts Feed */}
       <ScrollView
@@ -191,7 +151,7 @@ export default function HomeScreen() {
         onPress={() => console.log('Create post')}
         activeOpacity={0.85}
       >
-        <PenSquare color={colors.background} size={24} strokeWidth={2.5} />
+        <Plus color={colors.background} size={28} strokeWidth={3} />
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -206,64 +166,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.md,
-    paddingBottom: SPACING.lg,
-    borderBottomWidth: 1,
+    paddingVertical: SPACING.lg,
   },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.md,
-  },
-  logoText: {
-    fontSize: FONT_SIZES.xl,
+  logo: {
+    fontSize: FONT_SIZES['3xl'],
     fontWeight: '700',
-    letterSpacing: 1.5,
+    letterSpacing: -0.5,
   },
-  liveIndicator: {
+  headerActions: {
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: 4,
-    borderRadius: RADIUS.sm,
-    gap: 4,
-  },
-  liveDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
-  liveText: {
-    fontSize: 10,
-    fontWeight: '800',
-    letterSpacing: 0.5,
-  },
-  headerButton: {
-    width: 42,
-    height: 42,
-    borderRadius: RADIUS.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  filterContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.05)',
-  },
-  filterContent: {
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.md,
     gap: SPACING.sm,
   },
-  filterChip: {
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.sm,
-    borderRadius: RADIUS.full,
-    borderWidth: 1.5,
-  },
-  filterText: {
-    fontSize: FONT_SIZES.sm,
-    fontWeight: '700',
-    letterSpacing: 0.3,
+  iconButton: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   scrollView: {
     flex: 1,
@@ -275,15 +193,15 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: SPACING['3xl'],
     right: SPACING.lg,
-    width: 60,
-    height: 60,
+    width: 64,
+    height: 64,
     borderRadius: RADIUS.full,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
+    shadowColor: '#FF453A',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.5,
+    shadowRadius: 16,
     elevation: 12,
   },
 });

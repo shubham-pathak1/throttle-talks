@@ -1,7 +1,8 @@
 // src/screens/chat/ChatScreen.tsx
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Search, Edit } from 'lucide-react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Search, PenSquare } from 'lucide-react-native';
 import { useThemeStore } from '../../store/themeStore';
 import { FONTS, FONT_SIZES, SPACING, RADIUS } from '../../constants/theme';
 
@@ -39,7 +40,7 @@ const MOCK_CHATS: ChatPreview[] = [
     name: 'Mike Chen',
     username: 'mikespeed',
     avatar: 'https://i.pravatar.cc/150?img=8',
-    lastMessage: 'Thanks for the recommendation 🙏',
+    lastMessage: 'Thanks for the recommendation',
     timestamp: '3h',
     unread: false,
   },
@@ -56,6 +57,7 @@ const MOCK_CHATS: ChatPreview[] = [
 
 export default function ChatScreen() {
   const { colors } = useThemeStore();
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
@@ -71,16 +73,18 @@ export default function ChatScreen() {
         </Text>
         <View style={styles.headerActions}>
           <TouchableOpacity
-            style={[styles.iconButton, { backgroundColor: colors.surface }]}
+            style={styles.iconButton}
             activeOpacity={0.7}
+            onPress={() => console.log('Search')}
           >
-            <Search color={colors.text} size={20} strokeWidth={2} />
+            <Search color={colors.text} size={22} strokeWidth={2.5} />
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.iconButton, { backgroundColor: colors.primary }]}
+            style={styles.iconButton}
             activeOpacity={0.7}
+            onPress={() => console.log('New message')}
           >
-            <Edit color={colors.background} size={20} strokeWidth={2} />
+            <PenSquare color={colors.text} size={22} strokeWidth={2.5} />
           </TouchableOpacity>
         </View>
       </View>
@@ -97,6 +101,7 @@ export default function ChatScreen() {
               styles.chatItem,
               { borderBottomColor: colors.border },
             ]}
+            onPress={() => navigation.navigate('ChatDetail' as never, { chatId: chat.id, userName: chat.name } as never)}
             activeOpacity={0.7}
           >
             <Image source={{ uri: chat.avatar }} style={styles.avatar} />
@@ -114,7 +119,7 @@ export default function ChatScreen() {
                   style={[
                     styles.timestamp,
                     { 
-                      color: chat.unread ? colors.primary : colors.textTertiary,
+                      color: chat.unread ? colors.accent : colors.textTertiary,
                       fontFamily: FONTS.body.family 
                     },
                   ]}
@@ -136,7 +141,7 @@ export default function ChatScreen() {
                   {chat.lastMessage}
                 </Text>
                 {chat.unread && (
-                  <View style={[styles.unreadBadge, { backgroundColor: colors.primary }]} />
+                  <View style={[styles.unreadBadge, { backgroundColor: colors.accent }]} />
                 )}
               </View>
             </View>
@@ -156,7 +161,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.md,
+    paddingVertical: SPACING.lg,
   },
   title: {
     fontSize: FONT_SIZES['3xl'],
@@ -167,9 +172,8 @@ const styles = StyleSheet.create({
     gap: SPACING.sm,
   },
   iconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: RADIUS.md,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -184,7 +188,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 56,
     height: 56,
-    borderRadius: RADIUS.full,
+    borderRadius: RADIUS.lg,
     marginRight: SPACING.md,
   },
   chatContent: {
@@ -199,11 +203,11 @@ const styles = StyleSheet.create({
   },
   chatName: {
     fontSize: FONT_SIZES.base,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   timestamp: {
     fontSize: FONT_SIZES.xs,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   messageRow: {
     flexDirection: 'row',
@@ -216,8 +220,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   unreadBadge: {
-    width: 8,
-    height: 8,
+    width: 10,
+    height: 10,
     borderRadius: RADIUS.full,
     marginLeft: SPACING.sm,
   },

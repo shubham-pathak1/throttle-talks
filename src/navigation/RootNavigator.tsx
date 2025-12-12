@@ -6,10 +6,10 @@ import { RootTabParamList } from '../types/navigation';
 import CustomTabBar from './CustomTabBar';
 import HomeStack from './HomeStack';
 import GarageStack from './GarageStack';
+import ChatStack from './ChatStack';
 
 import MeetupsScreen from '../screens/meetups/MeetupsScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
-import ChatScreen from '../screens/chat/ChatScreen';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
@@ -26,7 +26,7 @@ export default function RootNavigator() {
         <Tab.Screen name="MeetupsTab" component={MeetupsScreen} />
         <Tab.Screen name="GarageTab" component={GarageStack} />
         <Tab.Screen name="ProfileTab" component={ProfileScreen} />
-        <Tab.Screen name="ChatTab" component={ChatScreen} />
+        <Tab.Screen name="ChatTab" component={ChatStack} />
       </Tab.Navigator>
     </NavigationContainer>
   );
