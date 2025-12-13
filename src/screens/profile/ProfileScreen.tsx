@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { View, ScrollView, StyleSheet, Image, TouchableOpacity, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import { Settings, Share2, Grid3X3, Layers } from 'lucide-react-native';
 import { useThemeStore } from '../../store/themeStore';
 import { SPACING, RADIUS, FONTS, FONT_SIZES } from '../../constants/theme';
@@ -38,6 +39,7 @@ const MOCK_GARAGE = [
 
 export default function ProfileScreen() {
   const { colors } = useThemeStore();
+  const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState<TabType>('posts');
 
   const displayImages = activeTab === 'posts' ? MOCK_POSTS : MOCK_GARAGE;
@@ -52,7 +54,7 @@ export default function ProfileScreen() {
         <View style={styles.headerActions}>
           <TouchableOpacity
             style={styles.iconButton}
-            onPress={() => console.log('Settings')}
+            onPress={() => navigation.navigate('Settings' as never)}
             activeOpacity={0.7}
           >
             <Settings color={colors.text} size={24} strokeWidth={2.5} />
@@ -123,7 +125,7 @@ export default function ProfileScreen() {
           {/* Action Button */}
           <TouchableOpacity
             style={[styles.editButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
-            onPress={() => console.log('Edit profile')}
+            onPress={() => navigation.navigate('EditProfile' as never)}
             activeOpacity={0.7}
           >
             <Text style={[styles.editButtonText, { color: colors.text, fontFamily: FONTS.body.family }]}>
@@ -173,9 +175,9 @@ export default function ProfileScreen() {
               style={styles.gridItem}
               onPress={() => {
                 if (activeTab === 'posts') {
-                  console.log('Open post', index);
+                  navigation.navigate('PostDetail' as never, { postId: String(index + 1) } as never);
                 } else {
-                  console.log('Open vehicle', index);
+                  navigation.navigate('VehicleDetail' as never, { vehicleId: String(index + 1) } as never);
                 }
               }}
               activeOpacity={0.9}

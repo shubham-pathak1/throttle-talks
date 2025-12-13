@@ -56,8 +56,7 @@ export default function GarageScreen() {
   const [vehicles, setVehicles] = useState<Vehicle[]>(MOCK_VEHICLES);
 
   const handleAddVehicle = () => {
-    console.log('Add vehicle');
-    // TODO: Navigate to add vehicle screen
+    navigation.navigate('AddVehicle' as never);
   };
 
   const handleVehiclePress = (vehicleId: string) => {

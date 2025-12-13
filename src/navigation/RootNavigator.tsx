@@ -7,9 +7,8 @@ import CustomTabBar from './CustomTabBar';
 import HomeStack from './HomeStack';
 import GarageStack from './GarageStack';
 import ChatStack from './ChatStack';
-
-import MeetupsScreen from '../screens/meetups/MeetupsScreen';
-import ProfileScreen from '../screens/profile/ProfileScreen';
+import MeetupsStack from './MeetupsStack';
+import ProfileStack from './ProfileStack';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
@@ -23,9 +22,9 @@ export default function RootNavigator() {
         }}
       >
         <Tab.Screen name="HomeTab" component={HomeStack} />
-        <Tab.Screen name="MeetupsTab" component={MeetupsScreen} />
+        <Tab.Screen name="MeetupsTab" component={MeetupsStack} />
         <Tab.Screen name="GarageTab" component={GarageStack} />
-        <Tab.Screen name="ProfileTab" component={ProfileScreen} />
+        <Tab.Screen name="ProfileTab" component={ProfileStack} />
         <Tab.Screen name="ChatTab" component={ChatStack} />
       </Tab.Navigator>
     </NavigationContainer>

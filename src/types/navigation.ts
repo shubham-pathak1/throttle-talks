@@ -23,17 +23,21 @@ export type HomeStackParamList = {
 export type GarageStackParamList = {
   Garage: undefined;
   VehicleDetail: { vehicleId: string };
+  AddVehicle: undefined;
 };
 
 // Meetups stack params
 export type MeetupsStackParamList = {
   Meetups: undefined;
   MeetupDetail: { meetupId: string };
+  CreateMeetup: undefined;
 };
 
 // Profile stack params
 export type ProfileStackParamList = {
   Profile: undefined;
+  Settings: undefined;
+  EditProfile: undefined;
 };
 
 // Chat stack params
@@ -41,6 +45,7 @@ export type ChatStackParamList = {
   Chat: undefined;
   ChatDetail: { chatId: string; userName: string };
 };
+
 
 // Navigation prop types
 export type HomeScreenNavigationProp = CompositeNavigationProp

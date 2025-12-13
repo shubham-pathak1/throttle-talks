@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { View, ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Plus, Filter } from 'lucide-react-native';
+import { useNavigation } from '@react-navigation/native';
 import { useThemeStore } from '../../store/themeStore';
 import { FONTS, FONT_SIZES, SPACING, RADIUS } from '../../constants/theme';
 import MeetupCard, { Meetup } from '../../components/meetups/MeetupCard';
@@ -56,11 +57,11 @@ const MOCK_MEETUPS: Meetup[] = [
 
 export default function MeetupsScreen() {
   const { colors } = useThemeStore();
+  const navigation = useNavigation();
   const [meetups, setMeetups] = useState<Meetup[]>(MOCK_MEETUPS);
 
   const handleCreateMeetup = () => {
-    console.log('Create meetup');
-    // TODO: Navigate to create meetup screen
+    navigation.navigate('CreateMeetup' as never);
   };
 
   const handleFilter = () => {
