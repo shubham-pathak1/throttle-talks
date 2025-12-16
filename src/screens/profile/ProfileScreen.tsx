@@ -1,14 +1,19 @@
 // src/screens/profile/ProfileScreen.tsx
 import { useState } from 'react';
-import { View, ScrollView, StyleSheet, Image, TouchableOpacity, Text } from 'react-native';
+import { View, ScrollView, StyleSheet, Image, TouchableOpacity, Text, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Settings, Share2, Grid3X3, Layers } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { MotiView } from 'moti';
 import { useThemeStore } from '../../store/themeStore';
-import { SPACING, RADIUS, FONTS, FONT_SIZES } from '../../constants/theme';
+import { SPACING, RADIUS, FONTS, FONT_SIZES, COLORS } from '../../constants/theme';
 import ThemeToggle from '../../components/common/ThemeToggle';
+import { useAuthStore } from '../../store/authStore';
 
 type TabType = 'posts' | 'garage';
+
+const { width } = Dimensions.get('window');
 
 const MOCK_USER = {
   name: 'Alex Rodriguez',
@@ -38,11 +43,13 @@ const MOCK_GARAGE = [
 ];
 
 export default function ProfileScreen() {
-  const { colors } = useThemeStore();
+  const { colors, colorScheme } = useThemeStore();
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState<TabType>('posts');
+  const { logout } = useAuthStore();
 
   const displayImages = activeTab === 'posts' ? MOCK_POSTS : MOCK_GARAGE;
+  const isDark = colorScheme === 'dark';
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
@@ -57,24 +64,35 @@ export default function ProfileScreen() {
             onPress={() => navigation.navigate('Settings' as never)}
             activeOpacity={0.7}
           >
-            <Settings color={colors.text} size={24} strokeWidth={2.5} />
+            <Settings color={colors.text} size={24} strokeWidth={2} />
           </TouchableOpacity>
           <View style={styles.headerRight}>
             <ThemeToggle size="md" />
             <TouchableOpacity
               style={styles.iconButton}
-              onPress={() => console.log('Share')}
+              onPress={() => logout()} // Temporary logout access
               activeOpacity={0.7}
             >
-              <Share2 color={colors.text} size={22} strokeWidth={2.5} />
+              <Share2 color={colors.text} size={22} strokeWidth={2} />
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Profile Info */}
         <View style={styles.profileSection}>
-          <Image source={{ uri: MOCK_USER.avatar }} style={styles.avatar} />
-          
+          <View style={styles.avatarContainer}>
+            <LinearGradient
+              colors={colors.gradient.accent as any}
+              style={styles.avatarGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <View style={[styles.avatarBorder, { backgroundColor: colors.background }]}>
+                <Image source={{ uri: MOCK_USER.avatar }} style={styles.avatar} />
+              </View>
+            </LinearGradient>
+          </View>
+
           <Text style={[styles.name, { color: colors.text, fontFamily: FONTS.heading.family }]}>
             {MOCK_USER.name}
           </Text>
@@ -124,7 +142,7 @@ export default function ProfileScreen() {
 
           {/* Action Button */}
           <TouchableOpacity
-            style={[styles.editButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
+            style={[styles.editButton, { backgroundColor: colors.surfaceElevated, borderColor: colors.border }]}
             onPress={() => navigation.navigate('EditProfile' as never)}
             activeOpacity={0.7}
           >
@@ -137,34 +155,41 @@ export default function ProfileScreen() {
         {/* Tabs */}
         <View style={[styles.tabs, { borderBottomColor: colors.border }]}>
           <TouchableOpacity
-            style={[styles.tab, activeTab === 'posts' && styles.activeTab]}
+            style={styles.tab}
             onPress={() => setActiveTab('posts')}
             activeOpacity={0.7}
           >
             <Grid3X3
               color={activeTab === 'posts' ? colors.text : colors.textTertiary}
-              size={22}
+              size={24}
               strokeWidth={activeTab === 'posts' ? 2.5 : 2}
             />
-            {activeTab === 'posts' && (
-              <View style={[styles.activeIndicator, { backgroundColor: colors.accent }]} />
-            )}
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.tab, activeTab === 'garage' && styles.activeTab]}
+            style={styles.tab}
             onPress={() => setActiveTab('garage')}
             activeOpacity={0.7}
           >
             <Layers
               color={activeTab === 'garage' ? colors.text : colors.textTertiary}
-              size={22}
+              size={24}
               strokeWidth={activeTab === 'garage' ? 2.5 : 2}
             />
-            {activeTab === 'garage' && (
-              <View style={[styles.activeIndicator, { backgroundColor: colors.accent }]} />
-            )}
           </TouchableOpacity>
+
+          {/* Animated Indicator */}
+          <MotiView
+            style={[styles.indicator, { backgroundColor: colors.text }]}
+            animate={{
+              translateX: activeTab === 'posts' ? 0 : width / 2,
+            }}
+            transition={{
+              type: 'spring',
+              damping: 20,
+              stiffness: 200,
+            }}
+          />
         </View>
 
         {/* Content Grid */}
@@ -174,11 +199,9 @@ export default function ProfileScreen() {
               key={index}
               style={styles.gridItem}
               onPress={() => {
-                if (activeTab === 'posts') {
-                  navigation.navigate('PostDetail' as never, { postId: String(index + 1) } as never);
-                } else {
-                  navigation.navigate('VehicleDetail' as never, { vehicleId: String(index + 1) } as never);
-                }
+                const params = activeTab === 'posts' ? { postId: String(index + 1) } : { vehicleId: String(index + 1) };
+                const route = activeTab === 'posts' ? 'PostDetail' : 'VehicleDetail';
+                (navigation.navigate as any)(route, params);
               }}
               activeOpacity={0.9}
             >
@@ -224,11 +247,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.lg,
     paddingBottom: SPACING['2xl'],
   },
-  avatar: {
-    width: 96,
-    height: 96,
-    borderRadius: RADIUS['2xl'],
+  avatarContainer: {
+    position: 'relative',
     marginBottom: SPACING.lg,
+  },
+  avatarGradient: {
+    padding: 3,
+    borderRadius: RADIUS.full,
+  },
+  avatarBorder: {
+    padding: 3,
+    borderRadius: RADIUS.full,
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: RADIUS.full,
   },
   name: {
     fontSize: FONT_SIZES['3xl'],
@@ -259,12 +293,12 @@ const styles = StyleSheet.create({
   },
   statDivider: {
     width: 1,
-    height: 40,
+    height: 32,
   },
   statNumber: {
     fontSize: FONT_SIZES['2xl'],
     fontWeight: '700',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   statLabel: {
     fontSize: FONT_SIZES.sm,
@@ -273,33 +307,30 @@ const styles = StyleSheet.create({
   editButton: {
     width: '100%',
     paddingVertical: SPACING.md,
-    borderRadius: RADIUS.md,
+    borderRadius: RADIUS.full, // Modern pill shape
     alignItems: 'center',
-    borderWidth: 1.5,
+    borderWidth: 1,
   },
   editButtonText: {
     fontSize: FONT_SIZES.base,
-    fontWeight: '700',
+    fontWeight: '600',
   },
   tabs: {
     flexDirection: 'row',
     borderBottomWidth: 1,
+    position: 'relative',
   },
   tab: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: SPACING.lg,
-    position: 'relative',
+    paddingVertical: SPACING.md,
   },
-  activeTab: {},
-  activeIndicator: {
+  indicator: {
     position: 'absolute',
-    bottom: 0,
+    bottom: -1, // Overlap border
     left: 0,
-    right: 0,
-    height: 3,
-    borderTopLeftRadius: RADIUS.xs,
-    borderTopRightRadius: RADIUS.xs,
+    width: width / 2,
+    height: 2,
   },
   grid: {
     flexDirection: 'row',

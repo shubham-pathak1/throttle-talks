@@ -65,7 +65,6 @@ export default function GarageScreen() {
 
   const handleEditVehicle = (vehicleId: string) => {
     console.log('Edit vehicle', vehicleId);
-    // TODO: Show edit menu
   };
 
   return (
@@ -87,12 +86,12 @@ export default function GarageScreen() {
               { color: colors.textSecondary, fontFamily: FONTS.body.family },
             ]}
           >
-            {vehicles.length} {vehicles.length === 1 ? 'vehicle' : 'vehicles'}
+            {vehicles.length} {vehicles.length === 1 ? 'project' : 'projects'} in the works
           </Text>
         </View>
         <TouchableOpacity
           onPress={handleAddVehicle}
-          style={[styles.addButton, { backgroundColor: colors.primary }]}
+          style={[styles.addButton, { backgroundColor: colors.accent }]}
           activeOpacity={0.7}
         >
           <Plus color={colors.background} size={24} strokeWidth={2.5} />
@@ -113,7 +112,7 @@ export default function GarageScreen() {
                 { color: colors.textSecondary, fontFamily: FONTS.body.family },
               ]}
             >
-              No vehicles yet. Add your first ride!
+              No vehicles yet. Start your build!
             </Text>
           </View>
         ) : (
@@ -126,6 +125,7 @@ export default function GarageScreen() {
             />
           ))
         )}
+        <View style={{ height: 40 }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -163,6 +163,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: SPACING.lg,
+    paddingBottom: SPACING.xl,
   },
   emptyState: {
     flex: 1,

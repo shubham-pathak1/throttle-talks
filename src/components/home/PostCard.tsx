@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Heart, MessageCircle, Share2, MoreVertical } from 'lucide-react-native';
 import { useThemeStore } from '../../store/themeStore';
 import { FONTS, FONT_SIZES, SPACING, RADIUS } from '../../constants/theme';
+import Card from '../common/Card';
 
 export interface Post {
   id: string;
@@ -37,10 +38,11 @@ export default function PostCard({
   const { colors } = useThemeStore();
 
   return (
-    <TouchableOpacity 
-      style={[styles.card, { backgroundColor: colors.surface }]} 
+    <Card
       onPress={onPress}
-      activeOpacity={0.98}
+      padding="none" // Custom padding management
+      style={styles.card}
+      elevated={true}
     >
       {/* Header */}
       <View style={styles.header}>
@@ -61,7 +63,7 @@ export default function PostCard({
                 { color: colors.textSecondary, fontFamily: FONTS.body.family },
               ]}
             >
-              {post.timestamp}
+              @{post.author.username} • {post.timestamp}
             </Text>
           </View>
         </View>
@@ -72,7 +74,7 @@ export default function PostCard({
 
       {/* Image */}
       {post.image && (
-        <Image source={{ uri: post.image }} style={styles.postImage} />
+        <Image source={{ uri: post.image }} style={styles.postImage} resizeMode="cover" />
       )}
 
       {/* Content */}
@@ -97,9 +99,9 @@ export default function PostCard({
         >
           <Heart
             color={post.isLiked ? colors.accent : colors.textSecondary}
-            size={22}
+            size={24}
             fill={post.isLiked ? colors.accent : 'none'}
-            strokeWidth={2.5}
+            strokeWidth={2}
           />
           <Text
             style={[
@@ -119,7 +121,7 @@ export default function PostCard({
           style={styles.actionButton}
           activeOpacity={0.7}
         >
-          <MessageCircle color={colors.textSecondary} size={22} strokeWidth={2.5} />
+          <MessageCircle color={colors.textSecondary} size={24} strokeWidth={2} />
           <Text
             style={[
               styles.actionText,
@@ -135,24 +137,23 @@ export default function PostCard({
           style={styles.actionButton}
           activeOpacity={0.7}
         >
-          <Share2 color={colors.textSecondary} size={20} strokeWidth={2.5} />
+          <Share2 color={colors.textSecondary} size={22} strokeWidth={2} />
         </TouchableOpacity>
       </View>
-    </TouchableOpacity>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: RADIUS.xl,
-    marginBottom: SPACING['2xl'],
-    overflow: 'hidden',
+    marginBottom: SPACING.xl, // Increased margin for cleaner separation
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: SPACING.lg,
+    padding: SPACING.md,
+    paddingBottom: SPACING.sm,
   },
   authorSection: {
     flexDirection: 'row',
@@ -160,9 +161,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   avatar: {
-    width: 42,
-    height: 42,
-    borderRadius: RADIUS.md,
+    width: 40,
+    height: 40,
+    borderRadius: RADIUS.full,
     marginRight: SPACING.md,
   },
   authorInfo: {
@@ -171,43 +172,44 @@ const styles = StyleSheet.create({
   authorName: {
     fontSize: FONT_SIZES.base,
     fontWeight: '700',
-    marginBottom: 2,
+    marginBottom: 0,
   },
   timestamp: {
     fontSize: FONT_SIZES.xs,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   moreButton: {
     padding: SPACING.xs,
   },
   postImage: {
     width: '100%',
-    height: 360,
+    height: 400, // Taller, more immersive images
     backgroundColor: '#1A1A1A',
   },
   contentSection: {
-    padding: SPACING.lg,
-    paddingTop: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.md,
   },
   content: {
     fontSize: FONT_SIZES.base,
-    fontWeight: '500',
-    lineHeight: 22,
+    fontWeight: '400',
+    lineHeight: 24,
   },
   actions: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: SPACING.lg,
     paddingBottom: SPACING.lg,
-    gap: SPACING.lg,
+    paddingTop: SPACING.xs,
+    gap: SPACING['2xl'],
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACING.xs,
+    gap: 6,
   },
   actionText: {
     fontSize: FONT_SIZES.sm,
-    fontWeight: '700',
+    fontWeight: '600',
   },
 });

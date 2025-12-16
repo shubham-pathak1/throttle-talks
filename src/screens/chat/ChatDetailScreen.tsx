@@ -4,6 +4,7 @@ import { View, ScrollView, Text, TextInput, StyleSheet, KeyboardAvoidingView, Pl
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Send, Phone, Video, MoreVertical } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useThemeStore } from '../../store/themeStore';
 import { FONTS, FONT_SIZES, SPACING, RADIUS } from '../../constants/theme';
 
@@ -132,32 +133,54 @@ export default function ChatDetailScreen() {
           showsVerticalScrollIndicator={false}
         >
           {messages.map((message) => (
-            <View
-              key={message.id}
-              style={[
-                styles.messageBubble,
-                message.isMine ? styles.myMessage : styles.theirMessage,
-              ]}
-            >
+            <View key={message.id}>
               <View
                 style={[
-                  styles.bubble,
-                  {
-                    backgroundColor: message.isMine ? colors.accent : colors.surface,
-                  },
+                  styles.messageBubble,
+                  message.isMine ? styles.myMessage : styles.theirMessage,
                 ]}
               >
-                <Text
-                  style={[
-                    styles.messageText,
-                    {
-                      color: message.isMine ? colors.background : colors.text,
-                      fontFamily: FONTS.body.family,
-                    },
-                  ]}
-                >
-                  {message.text}
-                </Text>
+                {message.isMine ? (
+                  <LinearGradient
+                    colors={colors.gradient.accent as any}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={[styles.bubble, { borderWidth: 0 }]}
+                  >
+                    <Text
+                      style={[
+                        styles.messageText,
+                        {
+                          color: '#FFF',
+                          fontFamily: FONTS.body.family,
+                        },
+                      ]}
+                    >
+                      {message.text}
+                    </Text>
+                  </LinearGradient>
+                ) : (
+                  <View
+                    style={[
+                      styles.bubble,
+                      {
+                        backgroundColor: colors.surface,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.messageText,
+                        {
+                          color: colors.text,
+                          fontFamily: FONTS.body.family,
+                        },
+                      ]}
+                    >
+                      {message.text}
+                    </Text>
+                  </View>
+                )}
               </View>
               <Text
                 style={[
@@ -212,7 +235,7 @@ export default function ChatDetailScreen() {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </SafeAreaView >
   );
 }
 

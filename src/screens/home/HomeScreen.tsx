@@ -1,13 +1,15 @@
 // src/screens/home/HomeScreen.tsx
 import { useState } from 'react';
-import { View, ScrollView, StyleSheet, RefreshControl, Text, TouchableOpacity } from 'react-native';
+import { View, ScrollView, StyleSheet, RefreshControl, Text, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { Search, SlidersHorizontal, Plus } from 'lucide-react-native';
+import { Search, SlidersHorizontal, Plus, Bell } from 'lucide-react-native';
 import { HomeScreenNavigationProp } from '../../types/navigation';
 import { useThemeStore } from '../../store/themeStore';
 import { SPACING, FONTS, FONT_SIZES, RADIUS } from '../../constants/theme';
 import PostCard from '../../components/home/PostCard';
+import Input from '../../components/common/Input';
+import { useAuthStore } from '../../store/authStore';
 
 export interface Post {
   id: string;
@@ -73,6 +75,7 @@ export default function HomeScreen() {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const [posts, setPosts] = useState<Post[]>(MOCK_POSTS);
   const [refreshing, setRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -86,10 +89,10 @@ export default function HomeScreen() {
       posts.map((post) =>
         post.id === postId
           ? {
-              ...post,
-              isLiked: !post.isLiked,
-              likes: post.isLiked ? post.likes - 1 : post.likes + 1,
-            }
+            ...post,
+            isLiked: !post.isLiked,
+            likes: post.isLiked ? post.likes - 1 : post.likes + 1,
+          }
           : post
       )
     );
@@ -99,23 +102,31 @@ export default function HomeScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={[styles.logo, { color: colors.text, fontFamily: FONTS.heading.family }]}>
-          Throttle Talks
-        </Text>
-        <View style={styles.headerActions}>
+        <View style={styles.headerTop}>
+          <Text style={[styles.logo, { color: colors.text, fontFamily: FONTS.heading.family }]}>
+            Throttle Talks
+          </Text>
           <TouchableOpacity
-            style={styles.iconButton}
-            onPress={() => console.log('Search')}
+            style={[styles.iconButton, { backgroundColor: colors.surface }]}
             activeOpacity={0.7}
           >
-            <Search color={colors.text} size={22} strokeWidth={2.5} />
+            <Bell color={colors.text} size={20} />
           </TouchableOpacity>
+        </View>
+
+        <View style={styles.searchContainer}>
+          <Input
+            placeholder="Search posts, builds, people..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            containerStyle={{ marginBottom: 0, flex: 1 }}
+            icon={<Search color={colors.textSecondary} size={20} />}
+          />
           <TouchableOpacity
-            style={styles.iconButton}
-            onPress={() => console.log('Filter')}
+            style={[styles.filterButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
             activeOpacity={0.7}
           >
-            <SlidersHorizontal color={colors.text} size={22} strokeWidth={2.5} />
+            <SlidersHorizontal color={colors.text} size={20} />
           </TouchableOpacity>
         </View>
       </View>
@@ -130,6 +141,7 @@ export default function HomeScreen() {
             refreshing={refreshing}
             onRefresh={handleRefresh}
             tintColor={colors.text}
+            colors={[colors.accent]}
           />
         }
       >
@@ -143,15 +155,16 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate('PostDetail', { postId: post.id })}
           />
         ))}
+        <View style={{ height: 80 }} />
       </ScrollView>
 
       {/* Floating Action Button */}
       <TouchableOpacity
         style={[styles.fab, { backgroundColor: colors.accent }]}
         onPress={() => navigation.navigate('CreatePost' as never)}
-        activeOpacity={0.85}
+        activeOpacity={0.88}
       >
-        <Plus color={colors.background} size={28} strokeWidth={3} />
+        <Plus color="#FFF" size={32} strokeWidth={2.5} />
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -162,24 +175,38 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.lg,
+    paddingBottom: SPACING.md,
+    paddingTop: SPACING.xs,
+  },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACING.md,
   },
   logo: {
     fontSize: FONT_SIZES['3xl'],
     fontWeight: '700',
-    letterSpacing: -0.5,
-  },
-  headerActions: {
-    flexDirection: 'row',
-    gap: SPACING.sm,
+    letterSpacing: -1,
   },
   iconButton: {
-    width: 44,
-    height: 44,
+    width: 40,
+    height: 40,
+    borderRadius: RADIUS.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    gap: SPACING.sm,
+    alignItems: 'center',
+  },
+  filterButton: {
+    width: 56,
+    height: 56,
+    borderRadius: RADIUS.lg,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -188,20 +215,21 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: SPACING.lg,
+    paddingTop: SPACING.md,
   },
   fab: {
     position: 'absolute',
     bottom: SPACING['3xl'],
     right: SPACING.lg,
-    width: 64,
-    height: 64,
+    width: 60,
+    height: 60,
     borderRadius: RADIUS.full,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#FF453A',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.5,
-    shadowRadius: 16,
-    elevation: 12,
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
   },
 });

@@ -1,8 +1,8 @@
 // src/screens/meetups/MeetupsScreen.tsx
 import { useState } from 'react';
-import { View, ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, ScrollView, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Plus, Filter } from 'lucide-react-native';
+import { Plus, Filter, Calendar as CalendarIcon, MapPin } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeStore } from '../../store/themeStore';
 import { FONTS, FONT_SIZES, SPACING, RADIUS } from '../../constants/theme';
@@ -55,10 +55,21 @@ const MOCK_MEETUPS: Meetup[] = [
   },
 ];
 
+const DATES = [
+  { day: '15', label: 'Sun' },
+  { day: '16', label: 'Mon' },
+  { day: '17', label: 'Tue' },
+  { day: '18', label: 'Wed', active: true },
+  { day: '19', label: 'Thu' },
+  { day: '20', label: 'Fri' },
+  { day: '21', label: 'Sat' },
+];
+
 export default function MeetupsScreen() {
   const { colors } = useThemeStore();
   const navigation = useNavigation();
   const [meetups, setMeetups] = useState<Meetup[]>(MOCK_MEETUPS);
+  const [selectedDate, setSelectedDate] = useState('18');
 
   const handleCreateMeetup = () => {
     navigation.navigate('CreateMeetup' as never);
@@ -66,7 +77,6 @@ export default function MeetupsScreen() {
 
   const handleFilter = () => {
     console.log('Filter meetups');
-    // TODO: Show filter modal
   };
 
   const handleAttend = (meetupId: string) => {
@@ -74,14 +84,34 @@ export default function MeetupsScreen() {
       meetups.map((meetup) =>
         meetup.id === meetupId
           ? {
-              ...meetup,
-              isAttending: !meetup.isAttending,
-              attendees: meetup.isAttending
-                ? meetup.attendees - 1
-                : meetup.attendees + 1,
-            }
+            ...meetup,
+            isAttending: !meetup.isAttending,
+            attendees: meetup.isAttending
+              ? meetup.attendees - 1
+              : meetup.attendees + 1,
+          }
           : meetup
       )
+    );
+  };
+
+  const renderDateItem = ({ item }: { item: typeof DATES[0] }) => {
+    const isSelected = item.day === selectedDate;
+    return (
+      <TouchableOpacity
+        style={[
+          styles.dateItem,
+          {
+            backgroundColor: isSelected ? colors.accent : colors.surface,
+            borderColor: isSelected ? colors.accent : colors.border,
+          }
+        ]}
+        onPress={() => setSelectedDate(item.day)}
+        activeOpacity={0.7}
+      >
+        <Text style={[styles.dateDay, { color: isSelected ? '#FFF' : colors.text }]}>{item.day}</Text>
+        <Text style={[styles.dateLabel, { color: isSelected ? 'rgba(255,255,255,0.7)' : colors.textSecondary }]}>{item.label}</Text>
+      </TouchableOpacity>
     );
   };
 
@@ -98,14 +128,17 @@ export default function MeetupsScreen() {
           >
             Meetups
           </Text>
-          <Text
-            style={[
-              styles.subtitle,
-              { color: colors.textSecondary, fontFamily: FONTS.body.family },
-            ]}
-          >
-            {meetups.length} upcoming events
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <MapPin size={14} color={colors.accent} />
+            <Text
+              style={[
+                styles.subtitle,
+                { color: colors.textSecondary, fontFamily: FONTS.body.family },
+              ]}
+            >
+              San Francisco, CA
+            </Text>
+          </View>
         </View>
         <View style={styles.headerActions}>
           <TouchableOpacity
@@ -117,13 +150,27 @@ export default function MeetupsScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handleCreateMeetup}
-            style={[styles.addButton, { backgroundColor: colors.primary }]}
+            style={[styles.addButton, { backgroundColor: colors.accent }]}
             activeOpacity={0.7}
           >
             <Plus color={colors.background} size={24} strokeWidth={2.5} />
           </TouchableOpacity>
         </View>
       </View>
+
+      {/* Date Strip */}
+      <View style={{ marginBottom: SPACING.lg }}>
+        <FlatList
+          data={DATES}
+          renderItem={renderDateItem}
+          keyExtractor={item => item.day}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: SPACING.lg, gap: SPACING.sm }}
+        />
+      </View>
+
+      <Text style={[styles.sectionTitle, { color: colors.text }]}>Upcoming Events</Text>
 
       {/* Meetups */}
       <ScrollView
@@ -139,6 +186,7 @@ export default function MeetupsScreen() {
             onAttend={() => handleAttend(meetup.id)}
           />
         ))}
+        <View style={{ height: 40 }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -154,6 +202,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: SPACING.lg,
     paddingVertical: SPACING.md,
+    marginBottom: SPACING.md,
   },
   title: {
     fontSize: FONT_SIZES['3xl'],
@@ -169,23 +218,48 @@ const styles = StyleSheet.create({
     gap: SPACING.sm,
   },
   iconButton: {
-    width: 48,
-    height: 48,
-    borderRadius: RADIUS.md,
+    width: 44,
+    height: 44,
+    borderRadius: RADIUS.full,
     alignItems: 'center',
     justifyContent: 'center',
   },
   addButton: {
-    width: 48,
-    height: 48,
+    width: 44,
+    height: 44,
     borderRadius: RADIUS.full,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  dateItem: {
+    width: 50,
+    height: 64,
+    borderRadius: RADIUS.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+  },
+  dateDay: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  dateLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  sectionTitle: {
+    fontSize: FONT_SIZES.lg,
+    fontWeight: '700',
+    marginLeft: SPACING.lg,
+    marginBottom: SPACING.md,
+    fontFamily: FONTS.heading.family,
   },
   scrollView: {
     flex: 1,
   },
   content: {
-    padding: SPACING.lg,
+    paddingHorizontal: SPACING.lg,
+    paddingBottom: SPACING.xl,
   },
 });

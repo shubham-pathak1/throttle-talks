@@ -38,6 +38,8 @@ export type ProfileStackParamList = {
   Profile: undefined;
   Settings: undefined;
   EditProfile: undefined;
+  PostDetail: { postId: string };
+  VehicleDetail: { vehicleId: string };
 };
 
 // Chat stack params
@@ -46,14 +48,22 @@ export type ChatStackParamList = {
   ChatDetail: { chatId: string; userName: string };
 };
 
+// Auth stack params
+export type AuthStackParamList = {
+  Onboarding: undefined;
+  Login: undefined;
+  Signup: undefined;
+};
+
 
 // Navigation prop types
-export type HomeScreenNavigationProp = CompositeNavigationProp
+// Navigation prop types
+export type HomeScreenNavigationProp = CompositeNavigationProp<
   NativeStackNavigationProp<HomeStackParamList, 'Home'>,
   BottomTabNavigationProp<RootTabParamList>
 >;
 
-export type GarageScreenNavigationProp = CompositeNavigationProp
+export type GarageScreenNavigationProp = CompositeNavigationProp<
   NativeStackNavigationProp<GarageStackParamList, 'Garage'>,
   BottomTabNavigationProp<RootTabParamList>
 >;

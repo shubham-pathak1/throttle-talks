@@ -2,43 +2,51 @@
 export const COLORS = {
   light: {
     background: '#FFFFFF',
-    surface: '#F8F8F8',
+    surface: '#F8F8F8', // Very subtle off-white
     surfaceElevated: '#FFFFFF',
-    text: '#0A0A0A',
-    textSecondary: '#6B6B6B',
-    textTertiary: '#9B9B9B',
-    primary: '#0A0A0A',
-    primaryLight: '#2A2A2A',
-    accent: '#FF3B30',
-    border: '#E5E5E5',
-    borderLight: '#F0F0F0',
-    success: '#34C759',
-    warning: '#FF9500',
-    error: '#FF3B30',
-    info: '#007AFF',
-    overlay: 'rgba(0, 0, 0, 0.4)',
-    overlayLight: 'rgba(0, 0, 0, 0.15)',
-    shadow: 'rgba(0, 0, 0, 0.08)',
+    text: '#000000',
+    textSecondary: '#666666',
+    textTertiary: '#AAAAAA',
+    primary: '#000000',
+    primaryLight: '#333333',
+    accent: '#000000', // Strict Black
+    border: '#E0E0E0',
+    borderLight: '#F5F5F5',
+    success: '#000000', // Success is black tick
+    warning: '#333333',
+    error: '#333333', // Errors are bold dark
+    info: '#666666',
+    overlay: 'rgba(255, 255, 255, 0.8)',
+    overlayLight: 'rgba(0, 0, 0, 0.05)',
+    shadow: 'rgba(0, 0, 0, 0.05)',
+    gradient: {
+      primary: ['#000000', '#000000'], // No gradient, solid luxury
+      accent: ['#333333', '#000000'],
+    },
   },
   dark: {
-    background: '#000000',
-    surface: '#0F0F0F',
-    surfaceElevated: '#1A1A1A',
+    background: '#000000', // True Black
+    surface: '#121212', // Subtle charcoal
+    surfaceElevated: '#1C1C1E',
     text: '#FFFFFF',
-    textSecondary: '#9B9B9B',
-    textTertiary: '#6B6B6B',
+    textSecondary: '#888888',
+    textTertiary: '#444444',
     primary: '#FFFFFF',
-    primaryLight: '#E5E5E5',
-    accent: '#FF453A',
-    border: '#2A2A2A',
-    borderLight: '#1F1F1F',
-    success: '#32D74B',
-    warning: '#FF9F0A',
-    error: '#FF453A',
-    info: '#0A84FF',
-    overlay: 'rgba(0, 0, 0, 0.7)',
-    overlayLight: 'rgba(0, 0, 0, 0.3)',
-    shadow: 'rgba(0, 0, 0, 0.3)',
+    primaryLight: '#CCCCCC',
+    accent: '#FFFFFF', // Strict White
+    border: '#222222',
+    borderLight: '#111111',
+    success: '#FFFFFF',
+    warning: '#CCCCCC',
+    error: '#FFFFFF',
+    info: '#888888',
+    overlay: 'rgba(0, 0, 0, 0.85)',
+    overlayLight: 'rgba(255, 255, 255, 0.1)',
+    shadow: 'rgba(0, 0, 0, 0.8)',
+    gradient: {
+      primary: ['#FFFFFF', '#FFFFFF'],
+      accent: ['#333333', '#111111'], // subtle metallic
+    },
   },
 };
 
@@ -46,6 +54,8 @@ export const FONTS = {
   heading: {
     family: 'ClashDisplay',
     weights: {
+      regular: '400' as const,
+      medium: '500' as const,
       semibold: '600' as const,
       bold: '700' as const,
     },
@@ -67,10 +77,10 @@ export const FONT_SIZES = {
   lg: 18,
   xl: 20,
   '2xl': 24,
-  '3xl': 30,
-  '4xl': 36,
+  '3xl': 32,
+  '4xl': 40,
   '5xl': 48,
-  '6xl': 60,
+  '6xl': 64,
 };
 
 export const SPACING = {
@@ -82,8 +92,8 @@ export const SPACING = {
   '2xl': 24,
   '3xl': 32,
   '4xl': 40,
-  '5xl': 48,
-  '6xl': 64,
+  '5xl': 64,
+  '6xl': 96,
 };
 
 export const RADIUS = {
@@ -92,15 +102,15 @@ export const RADIUS = {
   md: 12,
   lg: 16,
   xl: 20,
-  '2xl': 24,
+  '2xl': 28,
   full: 9999,
 };
 
 export const LAYOUT = {
-  screenPadding: 16,
-  maxContentWidth: 640,
-  tabBarHeight: 60,
-  headerHeight: 56,
+  screenPadding: 24, // Wider gutters for luxury feel
+  maxContentWidth: 600,
+  tabBarHeight: 90, // Taller, statement bar
+  headerHeight: 70, // More breathing room for headers
 };
 
 export type ColorScheme = 'light' | 'dark';
