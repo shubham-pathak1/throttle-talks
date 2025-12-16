@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Plus, Filter, Calendar as CalendarIcon, MapPin } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeStore } from '../../store/themeStore';
+import { ScreenLayout } from '../../components/common/ScreenLayout';
 import { FONTS, FONT_SIZES, SPACING, RADIUS, LAYOUT } from '../../constants/theme';
 import MeetupCard, { Meetup } from '../../components/meetups/MeetupCard';
 
@@ -116,7 +117,7 @@ export default function MeetupsScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
+    <ScreenLayout edges={['top']}>
       {/* Header */}
       <View style={styles.header}>
         <View>
@@ -186,9 +187,9 @@ export default function MeetupsScreen() {
             onAttend={() => handleAttend(meetup.id)}
           />
         ))}
-        <View style={{ height: 40 }} />
+        <View style={{ height: LAYOUT.bottomSpacer }} />
       </ScrollView>
-    </SafeAreaView>
+    </ScreenLayout>
   );
 }
 
@@ -261,6 +262,5 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: SPACING.lg,
-    paddingBottom: LAYOUT.bottomSpacer,
   },
 });

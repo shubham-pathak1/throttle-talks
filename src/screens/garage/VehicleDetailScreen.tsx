@@ -7,6 +7,7 @@ import { ArrowLeft, Settings, Gauge } from 'lucide-react-native';
 import { useThemeStore } from '../../store/themeStore';
 import { COLORS, FONTS, SPACING, FONT_SIZES, RADIUS, LAYOUT } from '../../constants/theme';
 import Button from '../../components/common/Button';
+import { FloatingActionBar } from '../../components/common/FloatingActionBar';
 
 const { width } = Dimensions.get('window');
 
@@ -88,20 +89,19 @@ export default function VehicleDetailScreen() {
               <Text style={[styles.modText, { color: colors.text }]}>{mod}</Text>
             </View>
           ))}
-
-          {/* Action Button - In Flow */}
-          <View style={styles.actionContainer}>
-            <Button
-              title="Edit Build"
-              variant="outline"
-              onPress={() => { }}
-              fullWidth
-              style={{ height: 56, borderRadius: RADIUS.full, borderWidth: 1.5 }}
-              textStyle={{ fontSize: FONT_SIZES.lg, letterSpacing: 1 }}
-            />
-          </View>
         </View>
       </ScrollView>
+
+      {/* Floating Action Bar */}
+      <FloatingActionBar>
+        <Button
+          title="Edit Build"
+          variant="primary"
+          onPress={() => { }}
+          fullWidth
+          style={{ borderRadius: RADIUS.lg }}
+        />
+      </FloatingActionBar>
     </View>
   );
 }

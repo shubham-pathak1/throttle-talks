@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Search, SlidersHorizontal, Plus, Bell } from 'lucide-react-native';
 import { HomeScreenNavigationProp } from '../../types/navigation';
 import { useThemeStore } from '../../store/themeStore';
-import { SPACING, FONTS, FONT_SIZES, RADIUS } from '../../constants/theme';
+import { SPACING, FONTS, FONT_SIZES, RADIUS, LAYOUT } from '../../constants/theme';
 import PostCard from '../../components/home/PostCard';
 import Input from '../../components/common/Input';
 import { useAuthStore } from '../../store/authStore';
@@ -155,7 +155,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate('PostDetail', { postId: post.id })}
           />
         ))}
-        <View style={{ height: 120 }} />
+        <View style={{ height: LAYOUT.bottomSpacer }} />
       </ScrollView>
 
       {/* Floating Action Button */}
