@@ -63,7 +63,7 @@ export default function ChatDetailScreen() {
 
   useEffect(() => {
     scrollViewRef.current?.scrollToEnd({ animated: false });
-  }, []);
+  }, [messages]);
 
   const handleSend = () => {
     if (inputText.trim()) {
@@ -75,18 +75,39 @@ export default function ChatDetailScreen() {
       };
       setMessages([...messages, newMessage]);
       setInputText('');
-      setTimeout(() => {
-        scrollViewRef.current?.scrollToEnd({ animated: true });
-      }, 100);
     }
   };
 
+  // Hide Tab Bar for immersive chat
+  useEffect(() => {
+    const parent = navigation.getParent();
+    parent?.setOptions({ tabBarStyle: { display: 'none' } });
+    return () => {
+      parent?.setOptions({
+        tabBarStyle: {
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          elevation: 0,
+          borderTopWidth: 0,
+          backgroundColor: 'transparent',
+          height: 90 // Re-applying approximate default or we need to read from theme
+        }
+      });
+      // Better strategy: Let the tab bar component handle itself, but 'display: none' is standard hack.
+      // A safer way is to just set tabBarStyle undefined to reset to default
+      parent?.setOptions({ tabBarStyle: undefined });
+    };
+  }, [navigation]);
+
+
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
       <KeyboardAvoidingView
         style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={0}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0} // Adjust based on header
       >
         {/* Header */}
         <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
@@ -95,8 +116,8 @@ export default function ChatDetailScreen() {
             style={styles.backButton}
             activeOpacity={0.7}
           >
-            <Text style={[styles.backText, { color: colors.accent, fontFamily: FONTS.body.family }]}>
-              ← Back
+            <Text style={[styles.backText, { color: colors.text, fontFamily: FONTS.body.family }]}>
+              ←
             </Text>
           </TouchableOpacity>
 
@@ -106,7 +127,7 @@ export default function ChatDetailScreen() {
               <Text style={[styles.headerName, { color: colors.text, fontFamily: FONTS.body.family }]}>
                 {MOCK_USER.name}
               </Text>
-              <Text style={[styles.headerStatus, { color: colors.accent, fontFamily: FONTS.body.family }]}>
+              <Text style={[styles.headerStatus, { color: colors.textSecondary, fontFamily: FONTS.body.family }]}>
                 {MOCK_USER.online ? 'Online' : 'Offline'}
               </Text>
             </View>
@@ -114,13 +135,10 @@ export default function ChatDetailScreen() {
 
           <View style={styles.headerActions}>
             <TouchableOpacity style={styles.headerButton} activeOpacity={0.7}>
-              <Phone color={colors.text} size={20} strokeWidth={2.5} />
+              <Phone color={colors.text} size={20} strokeWidth={2} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.headerButton} activeOpacity={0.7}>
-              <Video color={colors.text} size={20} strokeWidth={2.5} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.headerButton} activeOpacity={0.7}>
-              <MoreVertical color={colors.text} size={20} strokeWidth={2} />
+              <Video color={colors.text} size={20} strokeWidth={2} />
             </TouchableOpacity>
           </View>
         </View>
@@ -140,47 +158,30 @@ export default function ChatDetailScreen() {
                   message.isMine ? styles.myMessage : styles.theirMessage,
                 ]}
               >
-                {message.isMine ? (
-                  <LinearGradient
-                    colors={colors.gradient.accent as any}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={[styles.bubble, { borderWidth: 0 }]}
-                  >
-                    <Text
-                      style={[
-                        styles.messageText,
-                        {
-                          color: '#FFF',
-                          fontFamily: FONTS.body.family,
-                        },
-                      ]}
-                    >
-                      {message.text}
-                    </Text>
-                  </LinearGradient>
-                ) : (
-                  <View
+                <View
+                  style={[
+                    styles.bubble,
+                    {
+                      // STRICT MONOCHROME: Mine = White Text on Black (or inverse)
+                      backgroundColor: message.isMine ? colors.text : colors.surface,
+                      borderWidth: message.isMine ? 0 : 1,
+                      borderColor: colors.border,
+                    },
+                  ]}
+                >
+                  <Text
                     style={[
-                      styles.bubble,
+                      styles.messageText,
                       {
-                        backgroundColor: colors.surface,
+                        // Inverse color for 'Mine'
+                        color: message.isMine ? colors.background : colors.text,
+                        fontFamily: FONTS.body.family,
                       },
                     ]}
                   >
-                    <Text
-                      style={[
-                        styles.messageText,
-                        {
-                          color: colors.text,
-                          fontFamily: FONTS.body.family,
-                        },
-                      ]}
-                    >
-                      {message.text}
-                    </Text>
-                  </View>
-                )}
+                    {message.text}
+                  </Text>
+                </View>
               </View>
               <Text
                 style={[

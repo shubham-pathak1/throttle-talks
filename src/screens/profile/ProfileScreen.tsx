@@ -7,7 +7,7 @@ import { Settings, Share2, Grid3X3, Layers } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MotiView } from 'moti';
 import { useThemeStore } from '../../store/themeStore';
-import { SPACING, RADIUS, FONTS, FONT_SIZES, COLORS } from '../../constants/theme';
+import { SPACING, RADIUS, FONTS, FONT_SIZES, COLORS, LAYOUT } from '../../constants/theme';
 import ThemeToggle from '../../components/common/ThemeToggle';
 import { useAuthStore } from '../../store/authStore';
 

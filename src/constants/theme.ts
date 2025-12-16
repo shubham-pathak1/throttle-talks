@@ -111,6 +111,7 @@ export const LAYOUT = {
   maxContentWidth: 600,
   tabBarHeight: 90, // Taller, statement bar
   headerHeight: 70, // More breathing room for headers
+  bottomSpacer: 120, // Critical for clearing floating elements
 };
 
 export type ColorScheme = 'light' | 'dark';

@@ -155,7 +155,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate('PostDetail', { postId: post.id })}
           />
         ))}
-        <View style={{ height: 80 }} />
+        <View style={{ height: 120 }} />
       </ScrollView>
 
       {/* Floating Action Button */}
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    bottom: SPACING['3xl'],
+    bottom: 110, // Above tab bar
     right: SPACING.lg,
     width: 60,
     height: 60,

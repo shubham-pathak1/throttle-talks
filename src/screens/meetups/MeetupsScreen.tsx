@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Plus, Filter, Calendar as CalendarIcon, MapPin } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeStore } from '../../store/themeStore';
-import { FONTS, FONT_SIZES, SPACING, RADIUS } from '../../constants/theme';
+import { FONTS, FONT_SIZES, SPACING, RADIUS, LAYOUT } from '../../constants/theme';
 import MeetupCard, { Meetup } from '../../components/meetups/MeetupCard';
 
 const MOCK_MEETUPS: Meetup[] = [
@@ -249,17 +249,18 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   sectionTitle: {
-    fontSize: FONT_SIZES.lg,
+    fontSize: FONT_SIZES['2xl'],
     fontWeight: '700',
     marginLeft: SPACING.lg,
     marginBottom: SPACING.md,
     fontFamily: FONTS.heading.family,
+    textTransform: 'uppercase',
   },
   scrollView: {
     flex: 1,
   },
   content: {
     paddingHorizontal: SPACING.lg,
-    paddingBottom: SPACING.xl,
+    paddingBottom: LAYOUT.bottomSpacer,
   },
 });

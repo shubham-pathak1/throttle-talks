@@ -188,6 +188,9 @@ const styles = StyleSheet.create({
   },
   text: {
     textAlign: 'center',
-    letterSpacing: 0.5,
+    letterSpacing: 1, // Increased pacing
+    fontFamily: FONTS.heading.family, // Editorial
+    fontWeight: '600',
+    textTransform: 'uppercase',
   },
 });

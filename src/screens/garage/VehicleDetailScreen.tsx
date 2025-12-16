@@ -2,9 +2,10 @@ import { View, Text, StyleSheet, Image, ScrollView, Dimensions } from 'react-nat
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Settings, Gauge } from 'lucide-react-native'; // Changed Gauge to avoid conflict if any, but standard lucide is fine
+import { BlurView } from 'expo-blur';
+import { ArrowLeft, Settings, Gauge } from 'lucide-react-native';
 import { useThemeStore } from '../../store/themeStore';
-import { COLORS, FONTS, SPACING, FONT_SIZES, RADIUS } from '../../constants/theme';
+import { COLORS, FONTS, SPACING, FONT_SIZES, RADIUS, LAYOUT } from '../../constants/theme';
 import Button from '../../components/common/Button';
 
 const { width } = Dimensions.get('window');
@@ -27,12 +28,13 @@ const MOCK_VEHICLE = {
 };
 
 export default function VehicleDetailScreen() {
-  const { colors } = useThemeStore();
+  const { colors, colorScheme } = useThemeStore();
   const navigation = useNavigation();
+  const isDark = colorScheme === 'dark';
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: LAYOUT.bottomSpacer }}>
         <View style={styles.imageContainer}>
           <Image source={{ uri: MOCK_VEHICLE.image }} style={styles.image} />
           <LinearGradient
@@ -57,13 +59,24 @@ export default function VehicleDetailScreen() {
           </Text>
           <Text style={[styles.year, { color: colors.textSecondary }]}>{MOCK_VEHICLE.year}</Text>
 
-          {/* Specs Grid */}
+          {/* Specs Grid - Glassmorphism */}
           <View style={styles.specsGrid}>
             {MOCK_VEHICLE.specs.map((spec, index) => (
-              <View key={index} style={[styles.specCard, { backgroundColor: colors.surfaceElevated, borderColor: colors.border }]}>
-                <Text style={[styles.specValue, { color: colors.text }]}>{spec.value}</Text>
+              <BlurView
+                key={index}
+                intensity={isDark ? 40 : 80}
+                tint={isDark ? 'dark' : 'light'}
+                style={[
+                  styles.specCard,
+                  {
+                    borderColor: colors.border,
+                    overflow: 'hidden',
+                  }
+                ]}
+              >
+                <Text style={[styles.specValue, { color: colors.text, fontFamily: FONTS.heading.family }]}>{spec.value}</Text>
                 <Text style={[styles.specLabel, { color: colors.textSecondary }]}>{spec.label}</Text>
-              </View>
+              </BlurView>
             ))}
           </View>
 
@@ -75,11 +88,20 @@ export default function VehicleDetailScreen() {
               <Text style={[styles.modText, { color: colors.text }]}>{mod}</Text>
             </View>
           ))}
+
+          {/* Action Button - In Flow */}
+          <View style={styles.actionContainer}>
+            <Button
+              title="Edit Build"
+              variant="outline"
+              onPress={() => { }}
+              fullWidth
+              style={{ height: 56, borderRadius: RADIUS.full, borderWidth: 1.5 }}
+              textStyle={{ fontSize: FONT_SIZES.lg, letterSpacing: 1 }}
+            />
+          </View>
         </View>
       </ScrollView>
-      <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
-        <Button title="Edit Build" variant="outline" onPress={() => { }} fullWidth />
-      </View>
     </View>
   );
 }
@@ -89,7 +111,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   imageContainer: {
-    height: 350,
+    height: 400, // Taller image
     width: width,
   },
   image: {
@@ -114,21 +136,25 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: SPACING.lg,
+    transform: [{ translateY: -40 }], // Overlap image slightly
   },
   title: {
-    fontSize: FONT_SIZES['3xl'],
+    fontSize: FONT_SIZES['4xl'], // Massive title
     fontWeight: '700',
     marginBottom: SPACING.xs,
+    textTransform: 'uppercase',
+    letterSpacing: -1,
   },
   year: {
     fontSize: FONT_SIZES.xl,
     marginBottom: SPACING.xl,
     fontWeight: '600',
+    opacity: 0.8,
   },
   specsGrid: {
     flexDirection: 'row',
     gap: SPACING.md,
-    marginBottom: SPACING['2xl'],
+    marginBottom: SPACING['3xl'],
   },
   specCard: {
     flex: 1,
@@ -136,40 +162,39 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.lg,
     borderWidth: 1,
     alignItems: 'center',
+    justifyContent: 'center',
+    height: 100,
   },
   specValue: {
-    fontSize: FONT_SIZES.lg,
+    fontSize: FONT_SIZES.xl,
     fontWeight: '700',
     marginBottom: 4,
   },
   specLabel: {
     fontSize: FONT_SIZES.xs,
     textTransform: 'uppercase',
+    letterSpacing: 1,
+    fontWeight: '600',
   },
   sectionTitle: {
     fontSize: FONT_SIZES['2xl'],
     fontWeight: '700',
     marginBottom: SPACING.lg,
     fontFamily: FONTS.heading.family,
+    textTransform: 'uppercase',
   },
   modItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: SPACING.md,
+    paddingVertical: SPACING.lg,
     borderBottomWidth: 1,
     gap: SPACING.md,
   },
   modText: {
-    fontSize: FONT_SIZES.base,
+    fontSize: FONT_SIZES.lg,
     fontWeight: '500',
   },
-  footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: SPACING.md,
-    paddingBottom: 34,
-    borderTopWidth: 1,
+  actionContainer: {
+    marginTop: SPACING['3xl'],
   }
 });
