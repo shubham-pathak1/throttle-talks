@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Search, PenSquare } from 'lucide-react-native';
 import { useThemeStore } from '../../store/themeStore';
-import { FONTS, FONT_SIZES, SPACING, RADIUS } from '../../constants/theme';
+import { FONTS, FONT_SIZES, SPACING, RADIUS, LAYOUT } from '../../constants/theme';
 
 interface ChatPreview {
   id: string;
@@ -89,10 +89,10 @@ export default function ChatScreen() {
         </View>
       </View>
 
-      {/* Chat List */}
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: LAYOUT.bottomSpacer }}
       >
         {MOCK_CHATS.map((chat) => (
           <TouchableOpacity
@@ -101,7 +101,7 @@ export default function ChatScreen() {
               styles.chatItem,
               { borderBottomColor: colors.border },
             ]}
-            onPress={() => navigation.navigate('ChatDetail' as never, { chatId: chat.id, userName: chat.name } as never)}
+            onPress={() => (navigation.navigate as any)('ChatDetail', { chatId: chat.id, userName: chat.name })}
             activeOpacity={0.7}
           >
             <Image source={{ uri: chat.avatar }} style={styles.avatar} />
@@ -118,9 +118,9 @@ export default function ChatScreen() {
                 <Text
                   style={[
                     styles.timestamp,
-                    { 
+                    {
                       color: chat.unread ? colors.accent : colors.textTertiary,
-                      fontFamily: FONTS.body.family 
+                      fontFamily: FONTS.body.family
                     },
                   ]}
                 >

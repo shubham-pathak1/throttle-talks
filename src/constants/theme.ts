@@ -52,7 +52,7 @@ export const COLORS = {
 
 export const FONTS = {
   heading: {
-    family: 'ClashDisplay',
+    family: 'Inter_700Bold',
     weights: {
       regular: '400' as const,
       medium: '500' as const,
@@ -61,12 +61,15 @@ export const FONTS = {
     },
   },
   body: {
-    family: 'Satoshi',
+    family: 'Inter_400Regular',
     weights: {
       regular: '400' as const,
       medium: '500' as const,
       bold: '700' as const,
     },
+  },
+  mono: {
+    family: 'SpaceMono',
   },
 };
 
@@ -107,11 +110,13 @@ export const RADIUS = {
 };
 
 export const LAYOUT = {
-  screenPadding: 24, // Wider gutters for luxury feel
+  screenPadding: 24,
   maxContentWidth: 600,
-  tabBarHeight: 90, // Taller, statement bar
-  headerHeight: 70, // More breathing room for headers
-  bottomSpacer: 120, // Critical for clearing floating elements
+  tabBarHeight: 80,
+  tabBarActualHeight: 70, // Inner height without safe area
+  headerHeight: 70,
+  bottomSpacer: 140, // Generous clearance for all devices
+  fabBottom: 160, // FAB position above tab bar
 };
 
 export type ColorScheme = 'light' | 'dark';

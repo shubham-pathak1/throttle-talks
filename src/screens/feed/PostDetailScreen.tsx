@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, MessageSquare, Heart, Share2 } from 'lucide-react-native';
 import { useThemeStore } from '../../store/themeStore';
-import { COLORS, FONTS, SPACING, FONT_SIZES } from '../../constants/theme';
+import { COLORS, FONTS, SPACING, FONT_SIZES, LAYOUT } from '../../constants/theme';
 import Button from '../../components/common/Button';
 
 const { width } = Dimensions.get('window');
@@ -28,7 +28,7 @@ export default function PostDetailScreen() {
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
-            <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+            <ScrollView contentContainerStyle={{ paddingBottom: LAYOUT.bottomSpacer }}>
                 {/* Full Image Header */}
                 <View style={styles.imageContainer}>
                     <Image source={{ uri: MOCK_POST.image }} style={styles.image} />

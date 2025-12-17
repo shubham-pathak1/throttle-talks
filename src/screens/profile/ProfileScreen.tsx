@@ -56,6 +56,7 @@ export default function ProfileScreen() {
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: LAYOUT.bottomSpacer }}
       >
         {/* Header Actions */}
         <View style={styles.headerActions}>

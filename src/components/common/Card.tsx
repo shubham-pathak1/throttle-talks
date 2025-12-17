@@ -2,7 +2,7 @@ import { BlurView } from 'expo-blur';
 import { View, StyleSheet, ViewStyle, TouchableOpacity, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useThemeStore } from '../../store/themeStore';
-import { SPACING, RADIUS, COLORS } from '../../constants/theme';
+import { SPACING, RADIUS } from '../../constants/theme';
 
 interface CardProps {
   children: React.ReactNode;
@@ -11,6 +11,7 @@ interface CardProps {
   elevated?: boolean;
   glass?: boolean;
   padding?: keyof typeof SPACING | 'none';
+  noBorder?: boolean;
 }
 
 export default function Card({
@@ -20,7 +21,7 @@ export default function Card({
   elevated = true,
   glass = false,
   padding = 'lg',
-  ...props
+  noBorder = false,
 }: CardProps) {
   const { colorScheme, colors } = useThemeStore();
   const isDark = colorScheme === 'dark';
@@ -34,59 +35,78 @@ export default function Card({
     }
   };
 
-  const Container = glass ? BlurView : View;
+  const paddingValue = padding === 'none' ? 0 : SPACING[padding as keyof typeof SPACING];
 
-  // For blur we need specific logic
-  const blurProps = glass ? {
-    intensity: isDark ? 40 : 60,
-    tint: isDark ? 'dark' : 'light',
-  } : {};
+  // Glass card with BlurView
+  if (glass) {
+    const glassContent = (
+      <BlurView
+        intensity={isDark ? 60 : 80}
+        tint={isDark ? 'dark' : 'light'}
+        style={[
+          styles.card,
+          {
+            backgroundColor: isDark ? 'rgba(20, 20, 20, 0.7)' : 'rgba(255, 255, 255, 0.8)',
+            borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+            borderWidth: noBorder ? 0 : 1,
+            padding: paddingValue,
+          },
+          style,
+        ]}
+      >
+        {children}
+      </BlurView>
+    );
 
+    if (onPress) {
+      return (
+        <TouchableOpacity onPress={handlePress} activeOpacity={0.85}>
+          {glassContent}
+        </TouchableOpacity>
+      );
+    }
+    return glassContent;
+  }
+
+  // Standard solid card
   const content = (
-    <Container
-      {...blurProps as any}
+    <View
       style={[
         styles.card,
         {
-          backgroundColor: glass
-            ? 'transparent'
-            : (elevated ? colors.surfaceElevated : colors.surface),
-          padding: padding === 'none' ? 0 : SPACING[padding as keyof typeof SPACING],
-          borderColor: glass ? 'rgba(255,255,255,0.1)' : 'transparent',
-          borderWidth: glass ? 1 : 0,
+          backgroundColor: elevated ? colors.surfaceElevated : colors.surface,
+          borderColor: noBorder ? 'transparent' : colors.border,
+          borderWidth: noBorder ? 0 : 1,
+          padding: paddingValue,
         },
-        // Only apply shadows if NOT glass, or very subtle for glass
-        elevated && !glass && {
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: isDark ? 0.3 : 0.05,
-          shadowRadius: 8,
-          elevation: 4,
-        },
+        elevated && !isDark && styles.shadow,
         style,
       ]}
-      {...props}
     >
       {children}
-    </Container>
+    </View>
   );
 
   if (onPress) {
     return (
-      <TouchableOpacity
-        onPress={handlePress}
-        activeOpacity={0.8}
-        style={style}
-      >
+      <TouchableOpacity onPress={handlePress} activeOpacity={0.85}>
         {content}
       </TouchableOpacity>
     );
   }
   return content;
 }
+
 const styles = StyleSheet.create({
   card: {
-    borderRadius: RADIUS.xl, // More rounded modern look
-    overflow: 'visible', // Changed to visible for shadows to work on Android if needed, but usually hidden is safer for content clipping.
+    borderRadius: RADIUS.xl,
+    overflow: 'hidden',
+  },
+  shadow: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
   },
 });

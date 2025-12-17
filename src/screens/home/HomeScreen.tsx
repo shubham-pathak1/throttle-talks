@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    bottom: 110, // Above tab bar
+    bottom: LAYOUT.fabBottom,
     right: SPACING.lg,
     width: 60,
     height: 60,

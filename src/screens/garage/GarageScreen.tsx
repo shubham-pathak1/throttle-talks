@@ -6,7 +6,7 @@ import { Plus } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { GarageScreenNavigationProp } from '../../types/navigation';
 import { useThemeStore } from '../../store/themeStore';
-import { FONTS, FONT_SIZES, SPACING, RADIUS } from '../../constants/theme';
+import { FONTS, FONT_SIZES, SPACING, RADIUS, LAYOUT } from '../../constants/theme';
 import VehicleCard, { Vehicle } from '../../components/garage/VehicleCard';
 
 const MOCK_VEHICLES: Vehicle[] = [
@@ -125,7 +125,7 @@ export default function GarageScreen() {
             />
           ))
         )}
-        <View style={{ height: 40 }} />
+        <View style={{ height: LAYOUT.bottomSpacer }} />
       </ScrollView>
     </SafeAreaView>
   );

@@ -1,15 +1,13 @@
 import { BlurView } from 'expo-blur';
-import { View, TouchableOpacity, StyleSheet, Platform, Dimensions } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { Gauge, CalendarDays, Warehouse, UserCircle, MessagesSquare } from 'lucide-react-native';
+import { Home, Calendar, Car, User, MessageCircle } from 'lucide-react-native';
 import { MotiView } from 'moti';
 
 import { useThemeStore } from '../store/themeStore';
-import { SPACING, RADIUS, COLORS } from '../constants/theme';
-
-const { width } = Dimensions.get('window');
+import { SPACING, RADIUS, LAYOUT } from '../constants/theme';
 
 export default function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const { colors, colorScheme } = useThemeStore();
@@ -17,39 +15,42 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
   const isDark = colorScheme === 'dark';
 
   const getIcon = (routeName: string, isFocused: boolean) => {
-    // Icons are strictly black/white based on theme text color
     const iconColor = isFocused ? colors.text : colors.textTertiary;
-    const iconSize = 24;
+    const iconSize = 22;
+    const strokeWidth = isFocused ? 2.5 : 1.5;
 
     switch (routeName) {
       case 'HomeTab':
-        return <Gauge color={iconColor} size={iconSize} strokeWidth={isFocused ? 2.5 : 2} />;
+        return <Home color={iconColor} size={iconSize} strokeWidth={strokeWidth} />;
       case 'MeetupsTab':
-        return <CalendarDays color={iconColor} size={iconSize} strokeWidth={isFocused ? 2.5 : 2} />;
+        return <Calendar color={iconColor} size={iconSize} strokeWidth={strokeWidth} />;
       case 'GarageTab':
-        return <Warehouse color={iconColor} size={iconSize} strokeWidth={isFocused ? 2.5 : 2} />;
+        return <Car color={iconColor} size={iconSize} strokeWidth={strokeWidth} />;
       case 'ProfileTab':
-        return <UserCircle color={iconColor} size={iconSize} strokeWidth={isFocused ? 2.5 : 2} />;
+        return <User color={iconColor} size={iconSize} strokeWidth={strokeWidth} />;
       case 'ChatTab':
-        return <MessagesSquare color={iconColor} size={iconSize} strokeWidth={isFocused ? 2.5 : 2} />;
+        return <MessageCircle color={iconColor} size={iconSize} strokeWidth={strokeWidth} />;
       default:
-        return <Gauge color={iconColor} size={iconSize} />;
+        return <Home color={iconColor} size={iconSize} strokeWidth={strokeWidth} />;
     }
   };
 
   return (
-    <View style={styles.containerWrapper} pointerEvents="box-none">
+    <View
+      style={[
+        styles.wrapper,
+        { paddingBottom: Math.max(insets.bottom, 8) }
+      ]}
+    >
       <BlurView
-        intensity={isDark ? 80 : 95} // Increased intensity
+        intensity={100}
         tint={isDark ? 'dark' : 'light'}
         style={[
           styles.container,
           {
-            backgroundColor: isDark ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)', // Tint
-            borderColor: 'rgba(255,255,255,0.1)',
-            paddingBottom: Platform.OS === 'ios' ? SPACING.md : SPACING.sm,
-            marginBottom: insets.bottom + SPACING.sm,
-            overflow: 'hidden',
+            // SOLID glassmorphism - not transparent
+            backgroundColor: isDark ? 'rgba(10, 10, 10, 0.92)' : 'rgba(255, 255, 255, 0.95)',
+            borderTopColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
           },
         ]}
       >
@@ -80,19 +81,28 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
               accessibilityLabel={options.tabBarAccessibilityLabel}
               onPress={onPress}
               style={styles.tab}
-              activeOpacity={0.7}
+              activeOpacity={0.6}
             >
-              <View style={styles.iconContainer}>
+              <MotiView
+                animate={{
+                  scale: isFocused ? 1 : 0.95,
+                  opacity: isFocused ? 1 : 0.6,
+                }}
+                transition={{ type: 'timing', duration: 150 }}
+                style={styles.iconWrapper}
+              >
                 {getIcon(route.name, isFocused)}
-                {isFocused && (
-                  <MotiView
-                    from={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ type: 'spring', damping: 15 }}
-                    style={[styles.indicator, { backgroundColor: colors.accent }]}
-                  />
-                )}
-              </View>
+              </MotiView>
+
+              {/* Active indicator dot */}
+              <MotiView
+                animate={{
+                  opacity: isFocused ? 1 : 0,
+                  scale: isFocused ? 1 : 0,
+                }}
+                transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+                style={[styles.indicator, { backgroundColor: colors.text }]}
+              />
             </TouchableOpacity>
           );
         })}
@@ -102,43 +112,34 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
 }
 
 const styles = StyleSheet.create({
-  containerWrapper: {
+  wrapper: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    alignItems: 'center',
   },
   container: {
     flexDirection: 'row',
-    width: width - SPACING.lg * 2, // Floating width
-    borderRadius: RADIUS['2xl'],
-    borderWidth: 1,
+    borderTopWidth: 1,
     paddingTop: SPACING.sm,
     paddingHorizontal: SPACING.md,
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25, // Stronger shadow for floating effect
-    shadowRadius: 12,
   },
   tab: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 50,
+    paddingVertical: SPACING.sm,
   },
-  iconContainer: {
+  iconWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
   },
   indicator: {
-    position: 'absolute',
-    bottom: -6,
     width: 4,
     height: 4,
-    borderRadius: RADIUS.full,
+    borderRadius: 2,
+    marginTop: 4,
   },
 });
