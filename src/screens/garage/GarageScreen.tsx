@@ -2,11 +2,13 @@
 import { useState } from 'react';
 import { View, ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Plus } from 'lucide-react-native';
+import { Plus, Car } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
+import { MotiView } from 'moti';
+import * as Haptics from 'expo-haptics';
 import { GarageScreenNavigationProp } from '../../types/navigation';
 import { useThemeStore } from '../../store/themeStore';
-import { FONTS, FONT_SIZES, SPACING, RADIUS, LAYOUT } from '../../constants/theme';
+import { FONTS, FONT_SIZES, SPACING, RADIUS, LAYOUT, ANIMATIONS } from '../../constants/theme';
 import VehicleCard, { Vehicle } from '../../components/garage/VehicleCard';
 
 const MOCK_VEHICLES: Vehicle[] = [
@@ -56,6 +58,7 @@ export default function GarageScreen() {
   const [vehicles, setVehicles] = useState<Vehicle[]>(MOCK_VEHICLES);
 
   const handleAddVehicle = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     navigation.navigate('AddVehicle' as never);
   };
 
@@ -116,13 +119,19 @@ export default function GarageScreen() {
             </Text>
           </View>
         ) : (
-          vehicles.map((vehicle) => (
-            <VehicleCard
+          vehicles.map((vehicle, index) => (
+            <MotiView
               key={vehicle.id}
-              vehicle={vehicle}
-              onPress={() => handleVehiclePress(vehicle.id)}
-              onEdit={() => handleEditVehicle(vehicle.id)}
-            />
+              from={{ opacity: 0, translateY: 20 }}
+              animate={{ opacity: 1, translateY: 0 }}
+              transition={{ delay: index * 100, type: 'timing', duration: 300 }}
+            >
+              <VehicleCard
+                vehicle={vehicle}
+                onPress={() => handleVehiclePress(vehicle.id)}
+                onEdit={() => handleEditVehicle(vehicle.id)}
+              />
+            </MotiView>
           ))
         )}
         <View style={{ height: LAYOUT.bottomSpacer }} />

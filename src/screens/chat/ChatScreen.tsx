@@ -3,8 +3,9 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'rea
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Search, PenSquare } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useThemeStore } from '../../store/themeStore';
-import { FONTS, FONT_SIZES, SPACING, RADIUS, LAYOUT } from '../../constants/theme';
+import { FONTS, FONT_SIZES, SPACING, RADIUS, LAYOUT, ANIMATIONS } from '../../constants/theme';
 
 interface ChatPreview {
   id: string;
@@ -14,6 +15,7 @@ interface ChatPreview {
   lastMessage: string;
   timestamp: string;
   unread: boolean;
+  online?: boolean;
 }
 
 const MOCK_CHATS: ChatPreview[] = [
@@ -25,6 +27,7 @@ const MOCK_CHATS: ChatPreview[] = [
     lastMessage: 'Yeah man, the turbo upgrade is sick!',
     timestamp: '2m',
     unread: true,
+    online: true,
   },
   {
     id: '2',
@@ -34,6 +37,7 @@ const MOCK_CHATS: ChatPreview[] = [
     lastMessage: 'See you at the track day tomorrow!',
     timestamp: '1h',
     unread: true,
+    online: true,
   },
   {
     id: '3',
@@ -43,6 +47,7 @@ const MOCK_CHATS: ChatPreview[] = [
     lastMessage: 'Thanks for the recommendation',
     timestamp: '3h',
     unread: false,
+    online: false,
   },
   {
     id: '4',
@@ -52,12 +57,14 @@ const MOCK_CHATS: ChatPreview[] = [
     lastMessage: 'That exhaust sound is insane',
     timestamp: '1d',
     unread: false,
+    online: false,
   },
 ];
 
 export default function ChatScreen() {
-  const { colors } = useThemeStore();
+  const { colors, colorScheme } = useThemeStore();
   const navigation = useNavigation();
+  const isDark = colorScheme === 'dark';
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
@@ -94,58 +101,70 @@ export default function ChatScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: LAYOUT.bottomSpacer }}
       >
-        {MOCK_CHATS.map((chat) => (
-          <TouchableOpacity
+        {MOCK_CHATS.map((chat, index) => (
+          <MotiView
             key={chat.id}
-            style={[
-              styles.chatItem,
-              { borderBottomColor: colors.border },
-            ]}
-            onPress={() => (navigation.navigate as any)('ChatDetail', { chatId: chat.id, userName: chat.name })}
-            activeOpacity={0.7}
+            from={{ opacity: 0, translateX: -20 }}
+            animate={{ opacity: 1, translateX: 0 }}
+            transition={{ delay: index * 50, type: 'timing', duration: 250 }}
           >
-            <Image source={{ uri: chat.avatar }} style={styles.avatar} />
-            <View style={styles.chatContent}>
-              <View style={styles.chatHeader}>
-                <Text
-                  style={[
-                    styles.chatName,
-                    { color: colors.text, fontFamily: FONTS.body.family },
-                  ]}
-                >
-                  {chat.name}
-                </Text>
-                <Text
-                  style={[
-                    styles.timestamp,
-                    {
-                      color: chat.unread ? colors.accent : colors.textTertiary,
-                      fontFamily: FONTS.body.family
-                    },
-                  ]}
-                >
-                  {chat.timestamp}
-                </Text>
-              </View>
-              <View style={styles.messageRow}>
-                <Text
-                  style={[
-                    styles.lastMessage,
-                    {
-                      color: chat.unread ? colors.text : colors.textSecondary,
-                      fontFamily: FONTS.body.family,
-                    },
-                  ]}
-                  numberOfLines={1}
-                >
-                  {chat.lastMessage}
-                </Text>
-                {chat.unread && (
-                  <View style={[styles.unreadBadge, { backgroundColor: colors.accent }]} />
+            <TouchableOpacity
+              style={[
+                styles.chatItem,
+                { borderBottomColor: colors.border },
+              ]}
+              onPress={() => (navigation.navigate as any)('ChatDetail', { chatId: chat.id, userName: chat.name })}
+              activeOpacity={0.7}
+            >
+              <View style={styles.avatarContainer}>
+                <Image source={{ uri: chat.avatar }} style={styles.avatar} />
+                {chat.online && (
+                  <View style={[styles.onlineIndicator, { backgroundColor: '#22C55E', borderColor: colors.background }]} />
                 )}
               </View>
-            </View>
-          </TouchableOpacity>
+              <View style={styles.chatContent}>
+                <View style={styles.chatHeader}>
+                  <Text
+                    style={[
+                      styles.chatName,
+                      { color: colors.text, fontFamily: FONTS.body.family },
+                    ]}
+                  >
+                    {chat.name}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.timestamp,
+                      {
+                        color: chat.unread ? colors.text : colors.textTertiary,
+                        fontFamily: FONTS.body.family
+                      },
+                    ]}
+                  >
+                    {chat.timestamp}
+                  </Text>
+                </View>
+                <View style={styles.messageRow}>
+                  <Text
+                    style={[
+                      styles.lastMessage,
+                      {
+                        color: chat.unread ? colors.text : colors.textSecondary,
+                        fontFamily: FONTS.body.family,
+                        fontWeight: chat.unread ? '600' : '400',
+                      },
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {chat.lastMessage}
+                  </Text>
+                  {chat.unread && (
+                    <View style={[styles.unreadBadge, { backgroundColor: colors.text }]} />
+                  )}
+                </View>
+              </View>
+            </TouchableOpacity>
+          </MotiView>
         ))}
       </ScrollView>
     </SafeAreaView>
@@ -185,11 +204,23 @@ const styles = StyleSheet.create({
     padding: SPACING.lg,
     borderBottomWidth: 1,
   },
+  avatarContainer: {
+    position: 'relative',
+    marginRight: SPACING.md,
+  },
   avatar: {
     width: 56,
     height: 56,
     borderRadius: RADIUS.lg,
-    marginRight: SPACING.md,
+  },
+  onlineIndicator: {
+    position: 'absolute',
+    bottom: 2,
+    right: 2,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    borderWidth: 2,
   },
   chatContent: {
     flex: 1,
@@ -207,7 +238,7 @@ const styles = StyleSheet.create({
   },
   timestamp: {
     fontSize: FONT_SIZES.xs,
-    fontWeight: '700',
+    fontWeight: '600',
   },
   messageRow: {
     flexDirection: 'row',

@@ -113,10 +113,57 @@ export const LAYOUT = {
   screenPadding: 24,
   maxContentWidth: 600,
   tabBarHeight: 80,
-  tabBarActualHeight: 70, // Inner height without safe area
+  tabBarActualHeight: 70,
   headerHeight: 70,
-  bottomSpacer: 140, // Generous clearance for all devices
-  fabBottom: 160, // FAB position above tab bar
+  bottomSpacer: 150, // Extra generous clearance
+  fabBottom: 170, // Above tab bar with margin
+};
+
+export const SHADOWS = {
+  sm: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  md: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  lg: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.16,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  xl: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.24,
+    shadowRadius: 24,
+    elevation: 12,
+  },
+};
+
+export const ANIMATIONS = {
+  fast: 150,
+  normal: 250,
+  slow: 400,
+  spring: {
+    damping: 20,
+    stiffness: 300,
+    mass: 0.8,
+  },
+  springBouncy: {
+    damping: 12,
+    stiffness: 200,
+    mass: 0.6,
+  },
 };
 
 export type ColorScheme = 'light' | 'dark';
