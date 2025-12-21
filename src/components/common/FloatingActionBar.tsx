@@ -35,7 +35,7 @@ export const FloatingActionBar = ({ children, style }: FloatingActionBarProps) =
 const styles = StyleSheet.create({
     wrapper: {
         position: 'absolute',
-        bottom: LAYOUT.tabBarHeight + SPACING.md, // Float ABOVE the tab bar
+        bottom: 120, // Increased for proper clearance above tab bar + Android nav
         left: SPACING.lg,
         right: SPACING.lg,
         alignItems: 'center',

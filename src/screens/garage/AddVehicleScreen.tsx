@@ -345,7 +345,9 @@ const styles = StyleSheet.create({
     padding: SPACING.xs,
   },
   bottomBar: {
-    padding: SPACING.lg,
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.lg,
+    paddingBottom: 80, // Large padding for Android navigation bar
     borderTopWidth: 1,
   },
 });

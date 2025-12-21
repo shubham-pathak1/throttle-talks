@@ -13,16 +13,24 @@ export default function GarageStack() {
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_bottom',
-        presentation: 'modal',
       }}
     >
-      <Stack.Screen 
-        name="Garage" 
+      <Stack.Screen
+        name="Garage"
         component={GarageScreen}
         options={{ animation: 'none' }}
       />
       <Stack.Screen name="VehicleDetail" component={VehicleDetailScreen} />
-      <Stack.Screen name="AddVehicle" component={AddVehicleScreen} />
+      <Stack.Screen
+        name="AddVehicle"
+        component={AddVehicleScreen}
+        options={{ presentation: 'fullScreenModal' }}
+      />
+      <Stack.Screen
+        name="EditVehicle"
+        component={AddVehicleScreen}
+        options={{ presentation: 'fullScreenModal' }}
+      />
     </Stack.Navigator>
   );
 }

@@ -84,10 +84,10 @@ export default function PostDetailScreen() {
       comments.map((comment) =>
         comment.id === commentId
           ? {
-              ...comment,
-              isLiked: !comment.isLiked,
-              likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1,
-            }
+            ...comment,
+            isLiked: !comment.isLiked,
+            likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1,
+          }
           : comment
       )
     );
@@ -212,7 +212,9 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    padding: SPACING.md,
+    paddingHorizontal: SPACING.md,
+    paddingTop: SPACING.md,
+    paddingBottom: 80, // Large padding for Android navigation bar
     gap: SPACING.sm,
     borderTopWidth: 1,
   },

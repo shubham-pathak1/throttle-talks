@@ -24,6 +24,7 @@ export type GarageStackParamList = {
   Garage: undefined;
   VehicleDetail: { vehicleId: string };
   AddVehicle: undefined;
+  EditVehicle: { vehicleId: string };
 };
 
 // Meetups stack params

@@ -97,7 +97,7 @@ export default function VehicleDetailScreen() {
         <Button
           title="Edit Build"
           variant="primary"
-          onPress={() => { }}
+          onPress={() => (navigation as any).navigate('EditVehicle', { vehicleId: '1' })}
           fullWidth
           style={{ borderRadius: RADIUS.lg }}
         />
