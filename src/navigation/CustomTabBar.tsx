@@ -39,17 +39,17 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
     <View
       style={[
         styles.wrapper,
-        { paddingBottom: Math.max(insets.bottom, 12) }
+        { paddingBottom: Math.max(insets.bottom, 16) }
       ]}
     >
       <BlurView
-        intensity={120}
+        intensity={90}
         tint={isDark ? 'dark' : 'light'}
         style={[
           styles.container,
           {
-            backgroundColor: isDark ? 'rgba(8, 8, 8, 0.95)' : 'rgba(255, 255, 255, 0.98)',
-            borderTopColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
+            backgroundColor: isDark ? 'rgba(0, 0, 0, 0.85)' : 'rgba(255, 255, 255, 0.92)',
+            borderTopColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
           },
         ]}
       >
@@ -82,50 +82,23 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
               style={styles.tab}
               activeOpacity={0.7}
             >
-              {/* Glowing background for active tab */}
               <MotiView
                 animate={{
-                  opacity: isFocused ? 1 : 0,
-                  scale: isFocused ? 1 : 0.8,
+                  opacity: isFocused ? 1 : 0.5,
                 }}
-                transition={{
-                  type: 'spring',
-                  damping: ANIMATIONS.spring.damping,
-                  stiffness: ANIMATIONS.spring.stiffness,
-                }}
-                style={[
-                  styles.activeBackground,
-                  { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)' }
-                ]}
-              />
-
-              <MotiView
-                animate={{
-                  scale: isFocused ? 1.05 : 1,
-                  translateY: isFocused ? -2 : 0,
-                }}
-                transition={{
-                  type: 'spring',
-                  damping: ANIMATIONS.springBouncy.damping,
-                  stiffness: ANIMATIONS.springBouncy.stiffness,
-                }}
+                transition={{ type: 'timing', duration: 200 }}
                 style={styles.iconWrapper}
               >
                 {getIcon(route.name, isFocused)}
               </MotiView>
 
-              {/* Active indicator line */}
+              {/* Subtle indicator dot */}
               <MotiView
                 animate={{
                   opacity: isFocused ? 1 : 0,
-                  scaleX: isFocused ? 1 : 0,
-                  width: isFocused ? 20 : 4,
+                  scale: isFocused ? 1 : 0.5,
                 }}
-                transition={{
-                  type: 'spring',
-                  damping: 25,
-                  stiffness: 400,
-                }}
+                transition={{ type: 'timing', duration: 200 }}
                 style={[styles.indicator, { backgroundColor: colors.text }]}
               />
             </TouchableOpacity>
@@ -147,30 +120,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderTopWidth: 0.5,
     paddingTop: SPACING.md,
-    paddingHorizontal: SPACING.lg,
+    paddingHorizontal: SPACING.xl,
   },
   tab: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: SPACING.sm,
-    position: 'relative',
-  },
-  activeBackground: {
-    position: 'absolute',
-    width: 56,
-    height: 40,
-    borderRadius: RADIUS.lg,
   },
   iconWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 48,
-    height: 36,
+    width: 44,
+    height: 32,
   },
   indicator: {
-    height: 3,
-    borderRadius: 1.5,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
     marginTop: 6,
   },
 });

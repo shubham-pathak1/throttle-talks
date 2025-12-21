@@ -1,9 +1,10 @@
 // src/screens/home/CreatePostScreen.tsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { X, Image as ImageIcon, MapPin, Tag } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
 import { useThemeStore } from '../../store/themeStore';
 import { FONTS, FONT_SIZES, SPACING, RADIUS } from '../../constants/theme';
 import Button from '../../components/common/Button';
@@ -11,14 +12,26 @@ import Button from '../../components/common/Button';
 const CATEGORIES = ['Build', 'Review', 'Meet', 'Discussion', 'Question'];
 
 export default function CreatePostScreen() {
-  const { colors } = useThemeStore();
+  const { colors, colorScheme } = useThemeStore();
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+  const isDark = colorScheme === 'dark';
   const [content, setContent] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [location, setLocation] = useState('');
 
+  // Hide Tab Bar when this screen is active
+  useEffect(() => {
+    const parent = navigation.getParent();
+    parent?.setOptions({ tabBarStyle: { display: 'none' } });
+    return () => {
+      parent?.setOptions({ tabBarStyle: undefined });
+    };
+  }, [navigation]);
+
   const handleImagePick = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     // Mock image selection - in real app, use expo-image-picker
     const mockImages = [
       'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800',
@@ -30,13 +43,13 @@ export default function CreatePostScreen() {
 
   const handlePost = () => {
     if (content.trim()) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       console.log('Creating post:', {
         content,
         image: selectedImage,
         category: selectedCategory,
         location,
       });
-      // TODO: Add to posts list
       navigation.goBack();
     }
   };
@@ -44,7 +57,7 @@ export default function CreatePostScreen() {
   const canPost = content.trim().length > 0;
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -179,20 +192,26 @@ export default function CreatePostScreen() {
         </ScrollView>
 
         {/* Bottom Actions */}
-        <View style={[styles.bottomBar, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
+        <View style={[
+          styles.bottomBar,
+          {
+            backgroundColor: colors.background,
+            borderTopColor: colors.border,
+          }
+        ]}>
           <TouchableOpacity
-            style={[styles.mediaButton, { backgroundColor: colors.background }]}
+            style={[styles.mediaButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
             onPress={handleImagePick}
             activeOpacity={0.7}
           >
-            <ImageIcon color={colors.accent} size={24} strokeWidth={2} />
+            <ImageIcon color={colors.text} size={24} strokeWidth={2} />
           </TouchableOpacity>
 
           <Button
             title="Post"
             onPress={handlePost}
             variant="primary"
-            size="md"
+            size="lg"
             disabled={!canPost}
             style={styles.postButton}
           />
@@ -303,7 +322,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: SPACING.lg,
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.lg,
+    paddingBottom: 80, // Increased padding for Android navigation bar
     borderTopWidth: 1,
   },
   mediaButton: {

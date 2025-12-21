@@ -13,16 +13,22 @@ export default function HomeStack() {
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_bottom',
-        presentation: 'modal',
       }}
     >
-      <Stack.Screen 
-        name="Home" 
+      <Stack.Screen
+        name="Home"
         component={HomeScreen}
         options={{ animation: 'none' }}
       />
       <Stack.Screen name="PostDetail" component={PostDetailScreen} />
-      <Stack.Screen name="CreatePost" component={CreatePostScreen} />
+      <Stack.Screen
+        name="CreatePost"
+        component={CreatePostScreen}
+        options={{
+          presentation: 'fullScreenModal',
+          animation: 'slide_from_bottom',
+        }}
+      />
     </Stack.Navigator>
   );
 } 
