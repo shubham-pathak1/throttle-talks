@@ -1,7 +1,6 @@
 // src/components/common/Input.tsx
 import { useState } from 'react';
 import { View, TextInput, Text, StyleSheet, TextInputProps, ViewStyle, StyleProp } from 'react-native';
-import { MotiView, MotiText } from 'moti';
 import { useThemeStore } from '../../store/themeStore';
 import { FONTS, FONT_SIZES, SPACING, RADIUS } from '../../constants/theme';
 
@@ -26,42 +25,12 @@ export default function Input({
   const [isFocused, setIsFocused] = useState(false);
   const hasValue = value && value.length > 0;
 
+  const labelPositionStart = icon ? 48 : 20; // Align with text start
+  const labelPositionFloating = 12; // Align near left edge when floating
+
   return (
     <View style={[styles.container, containerStyle]}>
       <View style={styles.contentContainer}>
-        {label && (
-          <MotiText
-            from={{
-              translateY: hasValue || isFocused ? -24 : 0,
-              scale: hasValue || isFocused ? 0.85 : 1,
-              translateX: hasValue || isFocused ? -10 : 0,
-            }}
-            animate={{
-              translateY: hasValue || isFocused ? -28 : 14,
-              scale: hasValue || isFocused ? 0.85 : 1,
-              translateX: hasValue || isFocused ? 0 : (icon ? 30 : 10), // Adjust for icon padding
-            }}
-            transition={{
-              type: 'timing',
-              duration: 200,
-            }}
-            style={[
-              styles.label,
-              {
-                color: error ? colors.error : (isFocused ? colors.accent : colors.textTertiary),
-                fontFamily: FONTS.body.family,
-                backgroundColor: colors.background, // Cover border
-                paddingHorizontal: 4,
-                zIndex: 10,
-                position: 'absolute',
-                left: SPACING.xs,
-              },
-            ]}
-          >
-            {label}
-          </MotiText>
-        )}
-
         <View
           style={[
             styles.inputContainer,
@@ -71,7 +40,7 @@ export default function Input({
               borderColor: error
                 ? colors.error
                 : isFocused
-                  ? colors.text // Focus is strictly text color (black/white)
+                  ? colors.text
                   : (variant === 'underline' ? 'transparent' : colors.border),
               borderBottomColor: variant === 'underline'
                 ? (isFocused ? colors.text : colors.border)
@@ -81,6 +50,42 @@ export default function Input({
             },
           ]}
         >
+          {label && (hasValue || isFocused) && (
+            <Text
+              style={[
+                styles.label,
+                {
+                  color: error ? colors.error : colors.textTertiary,
+                  fontFamily: FONTS.body.family,
+                  position: 'absolute',
+                  top: 18,
+                  left: labelPositionStart,
+                  zIndex: 10,
+                  opacity: 0, // Hide entirely when focused/hasValue to mimic native placeholder behavior for now
+                },
+              ]}
+            >
+              {label}
+            </Text>
+          )}
+          {label && (!hasValue && !isFocused) && (
+            <Text
+              style={[
+                styles.label,
+                {
+                  color: error ? colors.error : colors.textTertiary,
+                  fontFamily: FONTS.body.family,
+                  position: 'absolute',
+                  top: 18,
+                  left: labelPositionStart,
+                  zIndex: 10,
+                },
+              ]}
+            >
+              {label}
+            </Text>
+          )}
+
           {icon && <View style={styles.icon}>{icon}</View>}
           <TextInput
             value={value}
@@ -102,7 +107,7 @@ export default function Input({
               },
               textInputProps.style,
             ]}
-            placeholderTextColor="transparent" // Hide default placeholder, use floating label
+            placeholderTextColor="transparent"
           />
         </View>
       </View>
@@ -142,7 +147,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: RADIUS.lg,
     paddingHorizontal: SPACING.md,
-    height: 56, // Fixed height for consistency
+    minHeight: 56, // Allow expansion for multiline inputs
+    position: 'relative', // Ensure absolute label is relative to this
   },
   icon: {
     marginRight: SPACING.sm,

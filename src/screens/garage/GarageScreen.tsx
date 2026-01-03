@@ -4,7 +4,7 @@ import { View, ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Plus, Car } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
-import { MotiView } from 'moti';
+
 import * as Haptics from 'expo-haptics';
 import { GarageScreenNavigationProp } from '../../types/navigation';
 import { useThemeStore } from '../../store/themeStore';
@@ -120,18 +120,16 @@ export default function GarageScreen() {
           </View>
         ) : (
           vehicles.map((vehicle, index) => (
-            <MotiView
+            <View
               key={vehicle.id}
-              from={{ opacity: 0, translateY: 20 }}
-              animate={{ opacity: 1, translateY: 0 }}
-              transition={{ delay: index * 100, type: 'timing', duration: 300 }}
+              style={{ marginBottom: SPACING.lg }}
             >
               <VehicleCard
                 vehicle={vehicle}
                 onPress={() => handleVehiclePress(vehicle.id)}
                 onEdit={() => handleEditVehicle(vehicle.id)}
               />
-            </MotiView>
+            </View>
           ))
         )}
         <View style={{ height: LAYOUT.bottomSpacer }} />

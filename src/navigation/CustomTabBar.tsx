@@ -1,10 +1,10 @@
-import { BlurView } from 'expo-blur';
+
 import { View, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { Home, Calendar, Car, User, MessageCircle } from 'lucide-react-native';
-import { MotiView } from 'moti';
+
 
 import { useThemeStore } from '../store/themeStore';
 import { SPACING, RADIUS, LAYOUT, ANIMATIONS } from '../constants/theme';
@@ -39,20 +39,15 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
     <View
       style={[
         styles.wrapper,
-        { paddingBottom: Math.max(insets.bottom, 16) }
+        {
+          paddingBottom: insets.bottom,
+          backgroundColor: isDark ? '#000000' : '#FFFFFF',
+          borderTopColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+          borderTopWidth: 0.5,
+        }
       ]}
     >
-      <BlurView
-        intensity={90}
-        tint={isDark ? 'dark' : 'light'}
-        style={[
-          styles.container,
-          {
-            backgroundColor: isDark ? 'rgba(0, 0, 0, 0.85)' : 'rgba(255, 255, 255, 0.92)',
-            borderTopColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
-          },
-        ]}
-      >
+      <View style={styles.container}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
           const isFocused = state.index === index;
@@ -82,29 +77,21 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
               style={styles.tab}
               activeOpacity={0.7}
             >
-              <MotiView
-                animate={{
-                  opacity: isFocused ? 1 : 0.5,
-                }}
-                transition={{ type: 'timing', duration: 200 }}
-                style={styles.iconWrapper}
+              <View
+                style={[
+                  styles.iconWrapper,
+                  {
+                    backgroundColor: isFocused ? (isDark ? '#1F1F1F' : '#F2F2F2') : 'transparent',
+                    opacity: 1 // Always 1, we control icon color via props
+                  }
+                ]}
               >
                 {getIcon(route.name, isFocused)}
-              </MotiView>
-
-              {/* Subtle indicator dot */}
-              <MotiView
-                animate={{
-                  opacity: isFocused ? 1 : 0,
-                  scale: isFocused ? 1 : 0.5,
-                }}
-                transition={{ type: 'timing', duration: 200 }}
-                style={[styles.indicator, { backgroundColor: colors.text }]}
-              />
+              </View>
             </TouchableOpacity>
           );
         })}
-      </BlurView>
+      </View>
     </View>
   );
 }
@@ -118,26 +105,22 @@ const styles = StyleSheet.create({
   },
   container: {
     flexDirection: 'row',
-    borderTopWidth: 0.5,
-    paddingTop: SPACING.md,
-    paddingHorizontal: SPACING.xl,
+    paddingTop: SPACING.sm, // Reduced top padding for better centering
+    paddingHorizontal: SPACING.md, // Reduced horizontal padding to fit pills
+    justifyContent: 'space-between', // Distribute evenly
   },
   tab: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: SPACING.sm,
+    paddingVertical: SPACING.xs,
   },
   iconWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 44,
-    height: 32,
+    borderRadius: 30, // Full pill radius
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
-  indicator: {
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
-    marginTop: 6,
-  },
+  // Indicator removed
 });

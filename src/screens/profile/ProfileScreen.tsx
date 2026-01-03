@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Settings, Share2, Grid3X3, Layers } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MotiView } from 'moti';
+
 import { useThemeStore } from '../../store/themeStore';
 import { SPACING, RADIUS, FONTS, FONT_SIZES, COLORS, LAYOUT } from '../../constants/theme';
 import ThemeToggle from '../../components/common/ThemeToggle';
@@ -180,16 +180,14 @@ export default function ProfileScreen() {
           </TouchableOpacity>
 
           {/* Animated Indicator */}
-          <MotiView
-            style={[styles.indicator, { backgroundColor: colors.text }]}
-            animate={{
-              translateX: activeTab === 'posts' ? 0 : width / 2,
-            }}
-            transition={{
-              type: 'spring',
-              damping: 20,
-              stiffness: 200,
-            }}
+          <View
+            style={[
+              styles.indicator,
+              {
+                backgroundColor: colors.text,
+                transform: [{ translateX: activeTab === 'posts' ? 0 : width / 2 }]
+              }
+            ]}
           />
         </View>
 

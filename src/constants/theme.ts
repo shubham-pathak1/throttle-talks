@@ -52,7 +52,7 @@ export const COLORS = {
 
 export const FONTS = {
   heading: {
-    family: 'Inter_700Bold',
+    family: 'ClashDisplay', // Premium Display Font
     weights: {
       regular: '400' as const,
       medium: '500' as const,
@@ -61,7 +61,7 @@ export const FONTS = {
     },
   },
   body: {
-    family: 'Inter_400Regular',
+    family: 'Satoshi', // Clean Modern Sans
     weights: {
       regular: '400' as const,
       medium: '500' as const,
@@ -115,7 +115,7 @@ export const LAYOUT = {
   tabBarHeight: 80,
   tabBarActualHeight: 70,
   headerHeight: 70,
-  bottomSpacer: 150, // Extra generous clearance
+  bottomSpacer: 120, // Adjusted for solid opaque tab bar clearance
   fabBottom: 170, // Above tab bar with margin
 };
 

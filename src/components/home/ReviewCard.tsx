@@ -1,7 +1,7 @@
 // src/components/home/ReviewCard.tsx
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Star, ThumbsUp, MoreVertical } from 'lucide-react-native';
-import { MotiView } from 'moti';
+
 import { useThemeStore } from '../../store/themeStore';
 import { FONTS, FONT_SIZES, SPACING, RADIUS, SHADOWS } from '../../constants/theme';
 import Card from '../common/Card';

@@ -11,6 +11,11 @@ import RootNavigator from './src/navigation/RootNavigator';
 
 SplashScreen.preventAutoHideAsync();
 
+import { Platform } from 'react-native';
+import * as NavigationBar from 'expo-navigation-bar';
+
+// ... other imports
+
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const { colorScheme } = useThemeStore();
@@ -21,12 +26,18 @@ export default function App() {
         console.log('Loading fonts...');
         await loadFonts();
         console.log('Fonts loaded!');
+
+        if (Platform.OS === 'android') {
+          await NavigationBar.setPositionAsync('absolute');
+          await NavigationBar.setBackgroundColorAsync('#00000000'); // Transparent
+          await NavigationBar.setButtonStyleAsync('light'); // White buttons/bar icons
+        }
+
         await new Promise(resolve => setTimeout(resolve, 500));
       } catch (e) {
         console.error('Error loading app:', e);
       } finally {
         setAppIsReady(true);
-        // Hide splash screen immediately when ready
         SplashScreen.hideAsync();
       }
     }

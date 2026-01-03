@@ -23,7 +23,11 @@ export default function ProfileStack() {
         options={{ animation: 'none' }}
       />
       <Stack.Screen name="Settings" component={SettingsScreen} />
-      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{ presentation: 'fullScreenModal' }}
+      />
       <Stack.Screen name="PostDetail" component={PostDetailScreen} />
       <Stack.Screen name="VehicleDetail" component={VehicleDetailScreen} />
     </Stack.Navigator>

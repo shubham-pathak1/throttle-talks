@@ -3,7 +3,7 @@ import React from 'react';
 import { Text, StyleSheet, ViewStyle, TextStyle, Platform, View, Pressable } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MotiView } from 'moti';
+
 import { useThemeStore } from '../../store/themeStore';
 import { FONTS, FONT_SIZES, SPACING, RADIUS, COLORS } from '../../constants/theme';
 
@@ -108,11 +108,7 @@ export default function Button({
   const gradientColors = getGradientColors();
 
   return (
-    <MotiView
-      animate={{
-        scale: 1,
-        opacity: 1,
-      }}
+    <View
       style={[
         styles.container,
         { width: fullWidth ? '100%' : 'auto' },
@@ -121,8 +117,6 @@ export default function Button({
     >
       <Pressable
         onPressIn={() => {
-          // Manual animation handling or just simple feedback via MotiView state if we had it.
-          // For simplicity/robustness with current Moti version:
         }}
         onPress={handlePress}
         disabled={disabled}
@@ -134,7 +128,7 @@ export default function Button({
             ...getPadding(),
             ...getBorder(),
             transform: [{ scale: pressed ? 0.96 : 1 }],
-            opacity: pressed ? 0.9 : 1, // Native verify first
+            opacity: pressed ? 0.9 : 1,
           },
         ]}
       >
@@ -166,7 +160,7 @@ export default function Button({
 
         </View>
       </Pressable>
-    </MotiView>
+    </View>
   );
 }
 

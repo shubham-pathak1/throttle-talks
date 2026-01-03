@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
 import { BarChart2, Check, MoreVertical } from 'lucide-react-native';
-import { MotiView } from 'moti';
+
 import * as Haptics from 'expo-haptics';
 import { useThemeStore } from '../../store/themeStore';
 import { FONTS, FONT_SIZES, SPACING, RADIUS, ANIMATIONS } from '../../constants/theme';
@@ -106,13 +106,10 @@ export default function PollCard({ poll, onPress, onVote }: PollCardProps) {
                         >
                             {/* Progress bar */}
                             {hasVoted && (
-                                <MotiView
-                                    from={{ width: '0%' }}
-                                    animate={{ width: `${percentage}%` }}
-                                    transition={{ type: 'timing', duration: 500, delay: index * 100 }}
+                                <View
                                     style={[
                                         styles.progressBar,
-                                        { backgroundColor: isSelected ? colors.text : colors.surface },
+                                        { backgroundColor: isSelected ? colors.text : colors.surface, width: `${percentage}%` },
                                     ]}
                                 />
                             )}
@@ -120,27 +117,20 @@ export default function PollCard({ poll, onPress, onVote }: PollCardProps) {
                             <View style={styles.optionContent}>
                                 <View style={styles.optionLeft}>
                                     {isSelected && (
-                                        <MotiView
-                                            from={{ scale: 0 }}
-                                            animate={{ scale: 1 }}
-                                            transition={{ type: 'spring', damping: 15, stiffness: 300 }}
+                                        <View
                                             style={[styles.checkCircle, { backgroundColor: colors.text }]}
                                         >
                                             <Check color={colors.background} size={12} strokeWidth={3} />
-                                        </MotiView>
+                                        </View>
                                     )}
                                     <Text style={[styles.optionText, { color: colors.text }]}>{option.text}</Text>
                                 </View>
                                 {hasVoted && (
-                                    <MotiView
-                                        from={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ delay: 300 }}
-                                    >
+                                    <View>
                                         <Text style={[styles.percentageText, { color: colors.textSecondary }]}>
                                             {percentage}%
                                         </Text>
-                                    </MotiView>
+                                    </View>
                                 )}
                             </View>
                         </Pressable>

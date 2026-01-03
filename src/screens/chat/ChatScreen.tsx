@@ -3,7 +3,7 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'rea
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Search, PenSquare } from 'lucide-react-native';
-import { MotiView } from 'moti';
+
 import { useThemeStore } from '../../store/themeStore';
 import { FONTS, FONT_SIZES, SPACING, RADIUS, LAYOUT, ANIMATIONS } from '../../constants/theme';
 
@@ -102,11 +102,8 @@ export default function ChatScreen() {
         contentContainerStyle={{ paddingBottom: LAYOUT.bottomSpacer }}
       >
         {MOCK_CHATS.map((chat, index) => (
-          <MotiView
+          <View
             key={chat.id}
-            from={{ opacity: 0, translateX: -20 }}
-            animate={{ opacity: 1, translateX: 0 }}
-            transition={{ delay: index * 50, type: 'timing', duration: 250 }}
           >
             <TouchableOpacity
               style={[
@@ -164,7 +161,7 @@ export default function ChatScreen() {
                 </View>
               </View>
             </TouchableOpacity>
-          </MotiView>
+          </View>
         ))}
       </ScrollView>
     </SafeAreaView>

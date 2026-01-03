@@ -4,7 +4,7 @@ import { View, ScrollView, StyleSheet, RefreshControl, Text, TouchableOpacity, I
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Search, SlidersHorizontal, Plus, Bell } from 'lucide-react-native';
-import { MotiView } from 'moti';
+
 import * as Haptics from 'expo-haptics';
 import { HomeScreenNavigationProp } from '../../types/navigation';
 import { useThemeStore } from '../../store/themeStore';
@@ -280,14 +280,15 @@ export default function HomeScreen() {
                 onPress={() => handleCategoryPress(category)}
                 activeOpacity={0.7}
               >
-                <MotiView
-                  animate={{
-                    backgroundColor: isActive
-                      ? colors.text
-                      : isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
-                  }}
-                  transition={{ type: 'timing', duration: ANIMATIONS.fast }}
-                  style={styles.categoryTab}
+                <View
+                  style={[
+                    styles.categoryTab,
+                    {
+                      backgroundColor: isActive
+                        ? colors.text
+                        : isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
+                    }
+                  ]}
                 >
                   <Text
                     style={[
@@ -297,7 +298,7 @@ export default function HomeScreen() {
                   >
                     {category}
                   </Text>
-                </MotiView>
+                </View>
               </TouchableOpacity>
             );
           })}
@@ -319,14 +320,11 @@ export default function HomeScreen() {
         }
       >
         {filteredFeed.map((item, index) => (
-          <MotiView
+          <View
             key={item.id}
-            from={{ opacity: 0, translateY: 20 }}
-            animate={{ opacity: 1, translateY: 0 }}
-            transition={{ delay: index * 50, type: 'timing', duration: 300 }}
           >
             {renderFeedItem(item)}
-          </MotiView>
+          </View>
         ))}
         <View style={{ height: LAYOUT.bottomSpacer }} />
       </ScrollView>

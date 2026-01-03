@@ -2,7 +2,7 @@
 import { useState, useRef } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, ScrollView, Pressable } from 'react-native';
 import { Bookmark, MoreVertical, ChevronLeft, ChevronRight, Wrench } from 'lucide-react-native';
-import { MotiView } from 'moti';
+
 import * as Haptics from 'expo-haptics';
 import { useThemeStore } from '../../store/themeStore';
 import { FONTS, FONT_SIZES, SPACING, RADIUS } from '../../constants/theme';
@@ -136,14 +136,16 @@ export default function ModShowcaseCard({ mod, onPress, onSave }: ModShowcaseCar
                 {/* Pagination Dots */}
                 <View style={styles.pagination}>
                     {[0, 1].map((index) => (
-                        <MotiView
+                        <View
                             key={index}
-                            animate={{
-                                width: activeIndex === index ? 24 : 8,
-                                opacity: activeIndex === index ? 1 : 0.4,
-                            }}
-                            transition={{ type: 'timing', duration: 200 }}
-                            style={[styles.paginationDot, { backgroundColor: '#FFF' }]}
+                            style={[
+                                styles.paginationDot,
+                                {
+                                    backgroundColor: '#FFF',
+                                    width: activeIndex === index ? 24 : 8,
+                                    opacity: activeIndex === index ? 1 : 0.4,
+                                }
+                            ]}
                         />
                     ))}
                 </View>

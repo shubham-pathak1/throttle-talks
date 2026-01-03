@@ -27,7 +27,7 @@ export default function EditProfileScreen() {
   const canSave = name.trim() && username.trim();
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -89,21 +89,23 @@ export default function EditProfileScreen() {
               containerStyle={styles.input}
             />
 
-            <View style={styles.input}>
-              <Text style={[styles.label, { color: colors.text, fontFamily: FONTS.body.family }]}>
-                Bio
-              </Text>
-              <Input
-                placeholder="Tell us about yourself..."
-                value={bio}
-                onChangeText={setBio}
-                multiline
-                style={styles.bioInput}
-              />
-              <Text style={[styles.charCount, { color: colors.textTertiary, fontFamily: FONTS.body.family }]}>
-                {bio.length}/150
-              </Text>
-            </View>
+            <Input
+              label="Bio"
+              placeholder="Tell us about yourself..."
+              value={bio}
+              onChangeText={setBio}
+              multiline
+              maxLength={150}
+              containerStyle={styles.input}
+              style={{
+                minHeight: 100,
+                textAlignVertical: 'top',
+                paddingTop: SPACING.lg,
+              }}
+            />
+            <Text style={[styles.charCount, { color: colors.textTertiary, fontFamily: FONTS.body.family }]}>
+              {bio.length}/150
+            </Text>
           </View>
         </ScrollView>
 
@@ -162,7 +164,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 120,
     height: 120,
-    borderRadius: RADIUS['3xl'],
+    borderRadius: RADIUS['2xl'],
   },
   cameraButton: {
     position: 'absolute',
@@ -184,15 +186,6 @@ const styles = StyleSheet.create({
   input: {
     marginBottom: SPACING.lg,
   },
-  label: {
-    fontSize: FONT_SIZES.sm,
-    fontWeight: '600',
-    marginBottom: SPACING.xs,
-  },
-  bioInput: {
-    minHeight: 100,
-    textAlignVertical: 'top',
-  },
   charCount: {
     fontSize: FONT_SIZES.xs,
     fontWeight: '600',
@@ -200,7 +193,9 @@ const styles = StyleSheet.create({
     marginTop: SPACING.xs,
   },
   bottomBar: {
-    padding: SPACING.lg,
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.lg,
+    paddingBottom: 80, // Large padding for Android navigation bar
     borderTopWidth: 1,
   },
 });

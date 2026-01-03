@@ -15,12 +15,16 @@ export default function MeetupsStack() {
         presentation: 'modal',
       }}
     >
-      <Stack.Screen 
-        name="Meetups" 
+      <Stack.Screen
+        name="Meetups"
         component={MeetupsScreen}
         options={{ animation: 'none' }}
       />
-      <Stack.Screen name="CreateMeetup" component={CreateMeetupScreen} />
+      <Stack.Screen
+        name="CreateMeetup"
+        component={CreateMeetupScreen}
+        options={{ presentation: 'fullScreenModal' }}
+      />
     </Stack.Navigator>
   );
 }

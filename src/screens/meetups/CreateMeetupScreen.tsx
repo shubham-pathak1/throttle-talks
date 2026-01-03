@@ -38,7 +38,7 @@ export default function CreateMeetupScreen() {
   const canCreate = title.trim() && description.trim() && date.trim() && time.trim() && location.trim();
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'bottom']}>
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -73,29 +73,21 @@ export default function CreateMeetupScreen() {
           />
 
           {/* Description */}
-          <View style={styles.input}>
-            <Text style={[styles.label, { color: colors.text, fontFamily: FONTS.body.family }]}>
-              Description
-            </Text>
-            <TextInput
-              style={[
-                styles.textArea,
-                {
-                  backgroundColor: colors.surface,
-                  color: colors.text,
-                  fontFamily: FONTS.body.family,
-                  borderColor: colors.border,
-                },
-              ]}
-              placeholder="Tell people what this meetup is about..."
-              placeholderTextColor={colors.textTertiary}
-              value={description}
-              onChangeText={setDescription}
-              multiline
-              numberOfLines={4}
-              maxLength={500}
-            />
-          </View>
+          <Input
+            label="Description"
+            placeholder="Tell people what this meetup is about..."
+            value={description}
+            onChangeText={setDescription}
+            multiline
+            numberOfLines={4}
+            maxLength={500}
+            containerStyle={styles.input}
+            style={{
+              minHeight: 120,
+              textAlignVertical: 'top',
+              paddingTop: SPACING.lg, // Ensure text starts below label padding if needed
+            }}
+          />
 
           {/* Date & Time */}
           <View style={styles.section}>
