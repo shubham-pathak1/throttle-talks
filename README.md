@@ -51,7 +51,6 @@ The project is engineered for performance and scalability using modern mobile te
 
 - [x] **Core Foundation**: Authentication, Navigation, Theme System.
 - [x] **Feature Implementation**: Feed, Garage, Meetups, Chat.
-- [x] **UI Polish**: Glassmorphism, Haptics, Monochrome aesthetic.
 - [ ] **Backend Integration**: Real-time database and auth (Supabase/Firebase).
 - [ ] **Performance Optimization**: List virtualization and image caching.
 - [ ] **Beta Release**: Internal testing and feedback loop.
