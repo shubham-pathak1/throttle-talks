@@ -12,7 +12,7 @@ export type PillNavItem = {
 };
 
 export interface PillNavProps {
-    logo: string;
+    logo?: string;
     logoAlt?: string;
     items: PillNavItem[];
     activeHref?: string;
@@ -250,7 +250,7 @@ const PillNav: React.FC<PillNavProps> = ({
                 aria-label="Primary"
                 style={cssVars}
             >
-                {isRouterLink(items?.[0]?.href) ? (
+                {logo && (isRouterLink(items?.[0]?.href) ? (
                     <div
                         ref={el => {
                             if (el) logoRef.current = el;
@@ -284,7 +284,7 @@ const PillNav: React.FC<PillNavProps> = ({
                     >
                         <img src={logo} alt={logoAlt} ref={logoImgRef} className="w-full h-full object-cover block rounded-full" />
                     </a>
-                )}
+                ))}
 
                 <div
                     ref={navItemsRef}

@@ -120,7 +120,7 @@ export default function Home() {
         <div className="flex gap-12 py-8 lg:py-16">
 
           {/* Left Sidebar - Navigation */}
-          <aside className="hidden lg:block w-64 shrink-0 sticky top-32 h-fit">
+          <aside className="hidden lg:block w-[72px] shrink-0 sticky top-8 h-fit">
             <Sidebar />
           </aside>
 

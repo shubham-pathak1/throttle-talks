@@ -57,7 +57,7 @@ export default function GaragePage() {
 
             <div className="container mx-auto px-4 lg:px-8 pt-24 relative z-10">
                 <div className="flex gap-12 py-8 lg:py-16">
-                    <aside className="hidden lg:block w-64 shrink-0 sticky top-32 h-fit">
+                    <aside className="hidden lg:block w-[72px] shrink-0 sticky top-8 h-fit">
                         <Sidebar />
                     </aside>
 

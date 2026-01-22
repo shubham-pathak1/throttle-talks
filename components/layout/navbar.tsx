@@ -6,8 +6,6 @@ export function Navbar() {
         <>
             <div className="hidden md:block">
                 <PillNav
-                    logo="/logo.png"
-                    logoAlt="Throttle Talks"
                     items={[
                         { label: 'Home', href: '/' },
                         { label: 'Explore', href: '/explore' },
@@ -43,7 +41,6 @@ export function Navbar() {
                     openMenuButtonColor="#fff"
                     accentColor="#fff"
                     colors={['#18181b', '#27272a', '#3f3f46', '#52525b']}
-                    logoUrl="/logo.png"
                     isFixed={true}
                 />
             </div>
