@@ -32,11 +32,13 @@ export default function RootLayout({
         <SmoothScroll />
 
         {/* Global Navigation Layout */}
-        <div className="flex min-h-screen">
+        <div className="flex min-h-screen w-full overflow-x-hidden">
           <Sidebar />
-          <main className="flex-1 md:pl-[80px]">
+          <main className="flex-1 w-full md:pl-[80px]">
             {children}
           </main>
+        </div>
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-[100]">
           <BottomNav />
         </div>
       </body>

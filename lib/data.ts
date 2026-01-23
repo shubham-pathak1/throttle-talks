@@ -75,7 +75,7 @@ export const POSTS = [
         "id": "p1",
         "user": "vance_dynamics",
         "timestamp": "2h ago",
-        "content": "Sector 3 timing on the Nürburgring is down by 0.4s with the new aero adjustments. The structural rigidity of the GT3 is unmatched. #TelemetryLog #911GT3",
+        "content": "PASSWORD",
         "image": "/images/landing/hero_bg.png",
         "stats": { "likes": 128, "comments": 24, "reposts": 15 }
     },
@@ -95,5 +95,54 @@ export const POSTS = [
             "status": "Active Protocol"
         },
         "stats": { "likes": 42, "comments": 4, "reposts": 8 }
+    },
+    {
+        "id": "p3",
+        "user": "vance_dynamics",
+        "timestamp": "12h ago",
+        "content": "High-altitude telemetry session. The intake pressure on the GT3 is maintaining 98% efficiency even at 2,000m elevation. Incredible atmospheric compensation.",
+        "image": "/images/landing/featured_porsche_911.png",
+        "stats": { "likes": 256, "comments": 12, "reposts": 45 }
+    },
+    {
+        "id": "p4",
+        "user": "vance_dynamics",
+        "timestamp": "1d ago",
+        "content": "Carbon-ceramic rotors after a continuous 30-min heat soak. Structural integrity remains nominal. The heat dissipation of the new ducting revision exceeded expectations.",
+        "image": "/images/landing/featured_nissan_gtr.png",
+        "stats": { "likes": 89, "comments": 3, "reposts": 12 }
+    },
+    {
+        "id": "p5",
+        "type": "poll",
+        "user": "vance_dynamics",
+        "timestamp": "2d ago",
+        "content": "Engineering Debate: For a dedicated track-build M3 CSL, is a manual conversion worth the structural compromise of the OE-spec SMG balance?",
+        "poll": {
+            "options": [
+                { "label": "Stay Sequential", "percentage": 15 },
+                { "label": "Full Manual Swap", "percentage": 65 },
+                { "label": "Paddle-Shift Upgrade", "percentage": 20 }
+            ],
+            "totalVotes": 1204,
+            "status": "Archived Protocol"
+        },
+        "stats": { "likes": 34, "comments": 82, "reposts": 5 }
+    },
+    {
+        "id": "p6",
+        "user": "vance_dynamics",
+        "timestamp": "3d ago",
+        "content": "The E46 architecture is timeless. Every weld and reinforcement point tells a story of performance engineering. Finalizing the subframe reinforcement protocol today.",
+        "image": "/images/landing/featured_e46_m3.png",
+        "stats": { "likes": 412, "comments": 28, "reposts": 102 }
+    },
+    {
+        "id": "p7",
+        "user": "vance_dynamics",
+        "timestamp": "4d ago",
+        "content": "Front-wheel drive precision has reached its peak with the FL5. The rotational physics on turn-in are surgical. Honda didn't just build a hatch; they built a scalpel.",
+        "image": "/images/landing/featured_civic_typer.png",
+        "stats": { "likes": 185, "comments": 15, "reposts": 22 }
     }
 ];

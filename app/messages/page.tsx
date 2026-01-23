@@ -49,7 +49,7 @@ export default function MessagesPage() {
                                 </Avatar>
                                 <div className="flex-1 text-left">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-sm font-bold text-white uppercase">@{conv.user.username}</span>
+                                        <span className="text-sm font-bold text-white uppercase">{conv.user.username}</span>
                                         <span className="text-[10px] text-grey">{conv.time}</span>
                                     </div>
                                     <p className="text-[11px] text-grey truncate leading-tight mt-0.5">{conv.lastMessage}</p>
@@ -67,7 +67,7 @@ export default function MessagesPage() {
                                 <AvatarImage src={activeThread.user.avatar} className="object-cover" />
                             </Avatar>
                             <div className="text-left">
-                                <h3 className="text-sm font-bold text-white uppercase tracking-tight">@{activeThread.user.username}</h3>
+                                <h3 className="text-sm font-bold text-white uppercase tracking-tight">{activeThread.user.username}</h3>
                                 <span className="text-[10px] text-grey uppercase tracking-widest">Active Sync</span>
                             </div>
                         </div>
