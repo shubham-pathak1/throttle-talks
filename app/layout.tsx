@@ -1,18 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Outfit } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
-import { Footer } from "@/components/layout/footer";
+import { Sidebar } from "@/components/layout/sidebar";
+import { BottomNav } from "@/components/layout/bottom-nav";
 import { SmoothScroll } from "@/components/ui/smooth-scroll";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -36,12 +27,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} antialiased bg-black text-white`}
+        className={`${outfit.variable} antialiased bg-black text-white`}
       >
-
         <SmoothScroll />
-        {children}
-        <Footer />
+
+        {/* Global Navigation Layout */}
+        <div className="flex min-h-screen w-full overflow-x-hidden">
+          <Sidebar />
+          <main className="flex-1 w-full md:pl-[80px]">
+            {children}
+          </main>
+        </div>
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-[100]">
+          <BottomNav />
+        </div>
       </body>
     </html>
   );

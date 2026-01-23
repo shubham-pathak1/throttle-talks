@@ -1,209 +1,218 @@
-"use client"
+"use client";
 
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Heart, MessageSquare, Share2, MoreHorizontal, ChevronRight } from "lucide-react";
+import { GlassCard } from "@/components/ui/glass-card";
+import { ThumbsUp, MessageSquare, ArrowLeftRight, Share, Send } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-interface PostProps {
-    id: string;
+interface PostCardProps {
     user: {
-        name: string;
+        username: string;
         avatar: string;
-        title: string;
-    };
-    type: 'status' | 'build_update' | 'poll';
-    content: {
-        text: string;
-        image?: string;
-        stats?: { label: string, value: string }[];
-        options?: { label: string, votes: number }[];
     };
     timestamp: string;
+    content: string;
+    image?: string;
+    type?: 'status' | 'poll';
+    poll?: {
+        options: { label: string; percentage: number }[];
+        totalVotes: number;
+        status: string;
+    };
+    stats: {
+        likes: number;
+        comments: number;
+        reposts: number;
+    };
 }
 
-export function PostCard({ id, user, type, content, timestamp }: PostProps) {
+export function PostCard({ user, timestamp, content, image, type = 'status', poll, stats }: PostCardProps) {
     const [isLiked, setIsLiked] = React.useState(false);
-    const [likesCount, setLikesCount] = React.useState(124);
-    const [showComments, setShowComments] = React.useState(false);
+    const [isReposted, setIsReposted] = React.useState(false);
+    const [isCommentsExpanded, setIsCommentsExpanded] = React.useState(false);
+    const [likeCount, setLikeCount] = React.useState(stats.likes);
+    const [repostCount, setRepostCount] = React.useState(stats.reposts);
     const [commentText, setCommentText] = React.useState("");
 
-    const toggleLike = () => {
+    // Local state for demo comments
+    const [localComments, setLocalComments] = React.useState([
+        { id: 1, user: "ShiftMaster", text: "Calibration looks solid on sector 3.", time: "1h ago" },
+        { id: 2, user: "AeroSpec", text: "Are you running the v2 winglet revision?", time: "45m ago" }
+    ]);
+
+    const handleLike = (e: React.MouseEvent) => {
+        e.stopPropagation();
         setIsLiked(!isLiked);
-        setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
+        setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
     };
 
-    const handleShare = () => {
-        navigator.clipboard.writeText(`https://throttle-talks.com/post/${id}`);
-        alert("Link copied to clipboard!");
+    const handleRepost = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setIsReposted(!isReposted);
+        setRepostCount(prev => isReposted ? prev - 1 : prev + 1);
+    };
+
+    const handleAddComment = () => {
+        if (!commentText.trim()) return;
+        const newComment = {
+            id: Date.now(),
+            user: "CURRENT_USER", // Mock current user
+            text: commentText,
+            time: "Just now"
+        };
+        setLocalComments([newComment, ...localComments]);
+        setCommentText("");
     };
 
     return (
-        <div className="p-6 rounded-3xl bg-zinc-900/40 border border-white/5 hover:border-white/10 transition-all duration-700 group relative overflow-hidden will-change-transform">
-
-            {/* Ambient background glow */}
-            <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/5 blur-[80px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-
-            {/* Post Header */}
-            <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                    <div className="relative">
-                        <Avatar className="w-11 h-11 ring-2 ring-white/5 group-hover:ring-white/10 transition-all">
-                            <AvatarImage src={user.avatar} />
-                            <AvatarFallback className="bg-zinc-800 text-[10px] font-bold text-white">{user.name[0]}</AvatarFallback>
-                        </Avatar>
-                        <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-white border-2 border-black" />
-                    </div>
-                    <div>
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-white tracking-tight group-hover:text-zinc-200 transition-colors">{user.name}</span>
-                            <span className="px-2 py-0.5 rounded-full bg-white/5 text-[10px] font-medium text-zinc-400 uppercase tracking-widest">{user.title}</span>
-                        </div>
-                        <span className="text-[10px] text-zinc-500 font-mono uppercase mt-1 block tracking-tight">{timestamp} • PHANTOM_NETWORK</span>
+        <GlassCard className="mb-4 group/card p-0 overflow-hidden border-white/12 shadow-[0_0_20px_rgba(255,255,255,0.02)]">
+            <div className="p-5">
+                {/* Header */}
+                <div className="flex items-center gap-3 mb-5">
+                    <Avatar className="w-10 h-10 border border-white/10">
+                        <AvatarImage src={user.avatar} className="object-cover" />
+                        <AvatarFallback className="bg-zinc-800 text-[10px]">{user.username[1].toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col text-left">
+                        <span className="text-sm font-black text-white uppercase tracking-tight">{user.username}</span>
+                        <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">{timestamp}</span>
                     </div>
                 </div>
-                <button className="text-zinc-700 hover:text-white transition-colors p-2">
-                    <MoreHorizontal className="w-5 h-5" />
-                </button>
-            </div>
 
-            {/* Post Content */}
-            <div className="space-y-6">
-                <p className="text-zinc-300 text-[15px] leading-relaxed font-light tracking-wide">
-                    {content.text}
-                </p>
-
-                {/* Conditional Content based on Type */}
-                {type === 'build_update' && content.image && (
-                    <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-black group/image shadow-2xl">
-                        <img
-                            src={content.image}
-                            alt="Build update"
-                            className="w-full aspect-[16/10] object-cover opacity-90"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
-
-                        {/* Film Grain / Noise Overlay */}
-                        <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
-
-                        {/* Technical Stats Overlay */}
-                        {content.stats && (
-                            <div className="absolute bottom-6 left-6 flex gap-3">
-                                {content.stats.map((stat, i) => (
-                                    <div key={i} className="px-4 py-2 rounded-xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-lg">
-                                        <span className="block text-[8px] text-zinc-500 uppercase font-mono tracking-widest mb-0.5">{stat.label}</span>
-                                        <span className="block text-sm text-white font-black tracking-tighter">{stat.value}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        <div className="absolute top-6 right-6 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[9px] font-mono text-zinc-400 uppercase tracking-widest">
-                            RAW_ASSET_LOG.V2
-                        </div>
+                {/* Content */}
+                {image && (
+                    <div className="aspect-video relative rounded-2xl overflow-hidden border border-white/10 bg-zinc-950 mb-5 shadow-2xl">
+                        <img src={image} className="w-full h-full object-cover opacity-90 transition-all duration-700 group-hover/card:opacity-100" alt="Post content" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                     </div>
                 )}
 
-                {type === 'poll' && content.options && (
-                    <div className="flex flex-col gap-3">
-                        {content.options.map((opt, i) => {
-                            const totalVotes = content.options!.reduce((acc, curr) => acc + curr.votes, 0);
-                            const percentage = Math.round((opt.votes / totalVotes) * 100);
-                            return (
-                                <button key={i} className="relative w-full p-5 rounded-2xl bg-white/[0.03] border border-white/5 text-left overflow-hidden hover:bg-white/[0.07] transition-all group/poll">
-                                    <div className="relative z-10 flex justify-between items-center">
-                                        <span className="text-sm font-bold text-zinc-400 group-hover/poll:text-white transition-colors uppercase tracking-tight">{opt.label}</span>
-                                        <span className="text-[10px] text-zinc-600 font-mono group-hover/poll:text-white transition-colors">{percentage}%</span>
-                                    </div>
+                <div className="space-y-4 mb-2 text-left">
+                    <p className="text-base text-zinc-200 leading-relaxed font-semibold">
+                        {content}
+                    </p>
+
+                    {type === 'poll' && poll && (
+                        <div className="space-y-2 py-4">
+                            {poll.options.map((option, i) => (
+                                <div key={i} className="relative h-14 glass-card overflow-hidden group/poll cursor-pointer active:scale-[0.99] transition-all bg-white/[0.02]">
                                     <div
-                                        className="absolute inset-y-0 left-0 bg-white/[0.05] transition-all duration-1000 ease-out"
-                                        style={{ width: `${percentage}%` }}
+                                        className="absolute inset-0 bg-white/10 transition-all duration-1000"
+                                        style={{ width: `${option.percentage}%` }}
                                     />
-                                </button>
-                            );
-                        })}
-                    </div>
-                )}
+                                    <div className="relative h-full px-5 flex items-center justify-between text-xs font-black uppercase tracking-widest">
+                                        <span className="text-white/40 group-hover/poll:text-white transition-colors">{option.label}</span>
+                                        <span className="text-white/40 font-mono tracking-tighter">{option.percentage}%</span>
+                                    </div>
+                                </div>
+                            ))}
+                            <div className="text-[9px] font-black text-white/20 uppercase tracking-[0.2em] pt-2 pl-1">
+                                {poll.totalVotes} responses
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
 
-            {/* Post Actions */}
-            <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
-                <div className="flex items-center gap-8">
-                    <button
-                        onClick={toggleLike}
-                        className={`flex items-center gap-2.5 transition-all duration-300 transform active:scale-90 ${isLiked ? 'text-white' : 'text-zinc-600 hover:text-zinc-200'}`}
-                    >
-                        <Heart className={`w-5 h-5 ${isLiked ? 'fill-white stroke-white' : ''} transition-all`} />
-                        <span className="text-xs font-mono font-bold tracking-tighter">{likesCount}</span>
-                    </button>
-                    <button
-                        onClick={() => setShowComments(!showComments)}
-                        className={`flex items-center gap-2.5 text-zinc-600 hover:text-zinc-200 transition-all ${showComments ? 'text-zinc-200' : ''}`}
-                    >
-                        <MessageSquare className="w-5 h-5" />
-                        <span className="text-xs font-mono font-bold tracking-tighter">18</span>
-                    </button>
+            {/* Engagement Footer */}
+            <div className="flex items-center justify-between px-2 py-2 bg-white/[0.02] border-t border-white/5 relative">
+                <div className="flex items-center gap-1">
+                    <EngagementItem
+                        icon={ThumbsUp}
+                        count={likeCount}
+                        active={isLiked}
+                        onClick={handleLike}
+                    />
+                    <EngagementItem
+                        icon={MessageSquare}
+                        count={localComments.length}
+                        active={isCommentsExpanded}
+                        onClick={() => setIsCommentsExpanded(!isCommentsExpanded)}
+                    />
+                    <EngagementItem
+                        icon={ArrowLeftRight}
+                        count={repostCount}
+                        active={isReposted}
+                        onClick={handleRepost}
+                    />
                 </div>
-                <button
-                    onClick={handleShare}
-                    className="flex items-center gap-2 text-zinc-600 hover:text-white transition-all transform active:scale-90"
-                >
-                    <Share2 className="w-5 h-5" />
+                <button className="h-10 w-10 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/5 rounded-xl transition-all active:scale-90">
+                    <Share className="w-4.5 h-4.5" strokeWidth={1.5} />
                 </button>
             </div>
 
-            {/* Expandable Comment Section */}
-            {showComments && (
-                <div className="mt-6 space-y-4 animate-in slide-in-from-top-4 duration-500 overflow-hidden">
-                    <div className="flex gap-3">
-                        <Avatar className="w-8 h-8 rounded-lg ring-1 ring-white/10">
-                            <AvatarFallback className="bg-zinc-800 text-[8px] text-white">U</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 flex gap-2">
+            {/* Functional Comment Tray */}
+            {isCommentsExpanded && (
+                <div className="bg-white/[0.01] border-t border-white/5 p-5 space-y-6 animate-in slide-in-from-top-2 duration-300">
+                    <div className="flex items-center gap-3">
+                        <div className="flex-1 relative">
                             <input
                                 type="text"
                                 value={commentText}
                                 onChange={(e) => setCommentText(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && setCommentText("")}
-                                placeholder="Write a comment..."
-                                className="flex-1 bg-white/[0.03] border border-white/5 rounded-xl h-9 px-3 text-xs focus:outline-none focus:border-white/20 transition-all font-light"
+                                onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
+                                placeholder="Execute Signal..."
+                                className="w-full h-11 bg-white/[0.03] border border-white/5 rounded-xl px-4 text-xs font-medium focus:outline-none focus:border-white/20 transition-all placeholder:text-white/10"
                             />
                             <button
-                                onClick={() => {
-                                    if (commentText) {
-                                        alert("Comment posted!");
-                                        setCommentText("");
-                                    }
-                                }}
-                                className="p-2 rounded-xl bg-white text-black hover:bg-zinc-200 transition-all active:scale-95"
+                                onClick={handleAddComment}
+                                className="absolute right-1.5 top-1.5 w-8 h-8 flex items-center justify-center bg-white text-black rounded-lg hover:bg-zinc-200 transition-all active:scale-95"
                             >
-                                <ChevronRight className="w-4 h-4" />
+                                <Send className="w-3.5 h-3.5" strokeWidth={2.5} />
                             </button>
                         </div>
                     </div>
 
-                    {/* Thread Layout */}
-                    <div className="space-y-4 pl-11 opacity-60">
-                        <div className="space-y-1">
-                            <span className="text-[10px] font-bold text-white uppercase">TurboTom</span>
-                            <p className="text-xs text-zinc-400 font-light uppercase">The fitment on those BBS wheels is insane! 🔥</p>
-                        </div>
-                        <div className="space-y-1">
-                            <span className="text-[10px] font-bold text-white uppercase">GhostRider</span>
-                            <p className="text-xs text-zinc-400 font-light uppercase">Stock turbo or upgraded?</p>
-                        </div>
+                    <div className="space-y-5">
+                        {localComments.map((comment) => (
+                            <div key={comment.id} className="flex gap-4">
+                                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/5 text-[9px] font-black text-white/20 uppercase">
+                                    {comment.user[0]}
+                                </div>
+                                <div className="flex-1 space-y-1 text-left">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[10px] font-black text-white uppercase tracking-tight">{comment.user}</span>
+                                        <span className="text-[9px] font-bold text-white/10 uppercase tracking-widest">{comment.time}</span>
+                                    </div>
+                                    <p className="text-xs text-white/60 leading-relaxed font-medium">
+                                        {comment.text}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             )}
-
-        </div>
+        </GlassCard>
     );
 }
 
-function ActionBtn({ icon, label }: { icon: React.ReactNode, label?: string }) {
+function EngagementItem({
+    icon: Icon,
+    count,
+    active = false,
+    activeColor = "text-white",
+    onClick
+}: {
+    icon: any,
+    count: number,
+    active?: boolean,
+    activeColor?: string,
+    onClick?: (e: React.MouseEvent) => void
+}) {
     return (
-        <button className="flex items-center gap-2 text-zinc-600 hover:text-white transition-all group">
-            <div className="group-hover:scale-110 transition-transform">{icon}</div>
-            {label && <span className="text-xs font-mono">{label}</span>}
+        <button
+            onClick={onClick}
+            className={cn(
+                "flex items-center gap-2.5 h-10 px-4 rounded-xl transition-all duration-300 active:scale-90 relative overflow-hidden group",
+                active ? activeColor : "text-white/40 hover:bg-white/5 hover:text-white"
+            )}
+        >
+            <Icon className={cn("w-4.5 h-4.5 relative z-10", active && "fill-current")} strokeWidth={active ? 1.8 : 1.5} />
+            <span className="text-[10px] font-black uppercase tracking-widest tabular-nums relative z-10 font-mono">
+                {count}
+            </span>
         </button>
     );
 }
