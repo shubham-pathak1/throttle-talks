@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Lock, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Lock } from "lucide-react";
 
 // Racing Helmet SVG Icon
 const HelmetIcon = ({ className }: { className?: string }) => (
